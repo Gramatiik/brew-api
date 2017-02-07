@@ -21,8 +21,7 @@ export default class RequestBuilder {
 
     processRecursivity() {
         if(this.req.params.recursive && this.req.params.recursive === 'false')
-            delete this.defaultOptions.include; //Delete related models if they exist
-
+            delete this.defaultOptions.include; //Delete query for related models if they exist
         return this;
     }
 
