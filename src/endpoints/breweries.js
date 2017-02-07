@@ -15,9 +15,12 @@ export default function breweriesEndpoints(server) {
                 where: {
                     id: req.params.id
                 }
-            }).then( (beer) => {
-                res.header('Content-Type', 'application/json');
-                res.send(beer.get({plain: true}));
+            }).then( (brewery) => {
+                if(!brewery){
+                    res.send(new restify.NotFoundError("Brewery was not found"));
+                } else {
+                    res.send(brewery.get({plain: true}));
+                }
                 return next();
             }).catch( (err) => {
                 return next(err);
