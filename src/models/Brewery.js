@@ -76,7 +76,7 @@ module.exports = function(sequelize, DataTypes) {
 		classMethods:{
 			associate: function (models) {
 				Brewery.hasOne(models.BreweryGeocode, { foreignKey: 'brewery_id'});
-				Brewery.hasMany( models.Beer);
+				Brewery.hasMany(models.Beer, { foreignKey: 'brewery_id'});
             }
         }
 	});

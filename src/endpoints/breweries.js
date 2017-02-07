@@ -1,4 +1,5 @@
 import db from "../models";
+import requestBuilder from "../helpers/requestBuilder";
 
 export default function breweriesEndpoints(server) {
     server.get({
@@ -10,21 +11,18 @@ export default function breweriesEndpoints(server) {
         }
     },
         function(req, res, next) {
-        if(req.params.id && req.params.id)
-            db.Brewery.findOne({
-                where: {
-                    id: req.params.id
-                },
-                include: [ db.BreweryGeocode ]
-            }).then( (brewery) => {
-                if(!brewery){
+        if(req.params.id && req.params.id) {
+            let query = requestBuilder(req, db, {include: [db.BreweryGeocode, {model: db.Beer, attributes: ['id', 'name']}] });
+            db.Brewery.findOne(query).then((brewery) => {
+                if (!brewery) {
                     res.send(new restify.NotFoundError("Brewery was not found"));
                 } else {
                     res.send(brewery.get({plain: true}));
                 }
                 return next();
-            }).catch( (err) => {
+            }).catch((err) => {
                 return next(err);
             });
+        }
     });
 }
