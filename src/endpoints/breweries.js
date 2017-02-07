@@ -1,19 +1,25 @@
 import db from "../models";
-import requestBuilder from "../helpers/requestBuilder";
+import RequestBuilder from "../helpers/requestBuilder";
 
 export default function breweriesEndpoints(server) {
     server.get({
         url: '/breweries/:id',
         validation: {
             resources: {
-                id: { isRequired: true, isNumeric: true }
+                id: { isRequired: true, isNumeric: true },
+                fields: { isRequired: false, regex: /^(([a-zA-Z0-9\-_],*)+|\*)$/, descriprion: "Fields to include in response (comma separated)"},
+                recursive: { isRequired: false, regex: /^(true|false)$/}
             }
         }
     },
         function(req, res, next) {
         if(req.params.id && req.params.id) {
-            let query = requestBuilder(req, db, {include: [db.BreweryGeocode, {model: db.Beer, attributes: ['id', 'name']}] });
-            db.Brewery.findOne(query).then((brewery) => {
+            let query = new RequestBuilder(req, db, {include: [db.BreweryGeocode, {model: db.Beer, attributes: ['id', 'name']}] })
+                .processFields()
+                .processRecursivity()
+                .processWhereClause()
+                .finalize();
+            db.Brewery.findOne(query).then( (brewery) => {
                 if (!brewery) {
                     res.send(new restify.NotFoundError("Brewery was not found"));
                 } else {
