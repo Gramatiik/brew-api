@@ -14,7 +14,8 @@ export default function breweriesEndpoints(server) {
             db.Brewery.findOne({
                 where: {
                     id: req.params.id
-                }
+                },
+                include: [ db.BreweryGeocode ]
             }).then( (brewery) => {
                 if(!brewery){
                     res.send(new restify.NotFoundError("Brewery was not found"));

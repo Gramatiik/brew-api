@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataTypes) {
-	return sequelize.define('Brewery', {
+	let Brewery = sequelize.define('Brewery', {
 		id: {
 			type: DataTypes.INTEGER(21),
 			allowNull: false,
@@ -72,6 +72,14 @@ module.exports = function(sequelize, DataTypes) {
 		}
 	}, {
 		tableName: 'breweries',
-		timestamps: false
+		timestamps: false,
+		classMethods:{
+			associate: function (models) {
+				Brewery.hasOne(models.BreweryGeocode, { foreignKey: 'brewery_id'});
+				Brewery.hasMany( models.Beer);
+            }
+        }
 	});
+
+	return Brewery;
 };

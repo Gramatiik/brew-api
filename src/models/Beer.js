@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataTypes) {
-	return sequelize.define('Beer', {
+	let Beer = sequelize.define('Beer', {
 		id: {
 			type: DataTypes.INTEGER(21),
 			allowNull: false,
@@ -67,6 +67,15 @@ module.exports = function(sequelize, DataTypes) {
 		}
 	}, {
 		tableName: 'beers',
-		timestamps: false
+		timestamps: false,
+        classMethods:{
+            associate: function (models) {
+                Beer.belongsTo(models.Brewery, { foreignKey: 'brewery_id'});
+                Beer.belongsTo(models.Category, { foreignKey: 'cat_id'});
+                Beer.belongsTo(models.Style, { foreignKey: 'style_id'});
+            }
+        }
 	});
+
+	return Beer;
 };
