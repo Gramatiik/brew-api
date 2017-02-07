@@ -1,4 +1,5 @@
 import db from "../models";
+import restify from "restify";
 import passport from "passport";
 import passportlHttp from "passport-http";
 const BasicStrategy = passportlHttp.BasicStrategy;
@@ -22,8 +23,6 @@ passport.use(new BasicStrategy(
     }
 ));
 
-let isAuthenticated = passport.authenticate('basic', { session: false });
-
 export default function beersEndpoints(server) {
     server.get({
         url: '/beers/:id',
@@ -33,7 +32,7 @@ export default function beersEndpoints(server) {
             }
         }
     },
-        isAuthenticated,
+        //passport.authenticate('basic', { session: false }),
         function(req, res, next) {
         if(req.params.id && req.params.id)
             db.Beer.findOne({
@@ -41,8 +40,11 @@ export default function beersEndpoints(server) {
                     id: req.params.id
                 }
             }).then( (beer) => {
-                res.header('Content-Type', 'application/json');
-                res.send(beer.get({plain: true}));
+                if(!beer) {
+                    res.send(new restify.NotFoundError("Requested beer was not found"));
+                } else {
+                    res.send(beer.get({plain: true}));
+                }
                 return next();
             }).catch( (err) => {
                 return next(err);
