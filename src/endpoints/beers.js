@@ -2,6 +2,16 @@ import db from "../models";
 import restify from "restify";
 
 export default function beersEndpoints(server, passport) {
+
+    server.get('/beers/count', (req, res, next) => {
+        db.Beer.count().then( (count) => {
+            res.send({count: count});
+            return next();
+        }).catch( (err) => {
+            return next(err);
+        });
+    });
+
     server.get({
         url: '/beers/:id',
         validation: {
