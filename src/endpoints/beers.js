@@ -3,6 +3,13 @@ import restify from "restify";
 
 export default function beersEndpoints(server, passport) {
 
+    /**
+     * @api {get} /beers/count number of beers
+     * @apiName GetBeersCount
+     * @apiGroup Beers
+     * @apiVersion 0.1.0
+     * @apiSuccess {Number} count number of beers
+     */
     server.get('/beers/count', (req, res, next) => {
         db.Beer.count().then( (count) => {
             res.send({count: count});
@@ -12,6 +19,13 @@ export default function beersEndpoints(server, passport) {
         });
     });
 
+    /**
+     * @api {get} /breweries get a list of beers
+     * @apiName GetBeers
+     * @apiGroup Beers
+     * @apiVersion 0.1.0
+     * @apiSuccess {BeerObject[]} beers Array of beers
+     */
     server.get({
         url: '/beers/:id',
         validation: {
