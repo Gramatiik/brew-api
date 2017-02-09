@@ -11,7 +11,7 @@ export default class RequestBuilder {
     }
 
     //for 'fields‘ parameter
-    enableFields() {
+    enableFieldsSelection() {
         if(this.req.params.fields && this.req.params.fields !== '*') {
             this.buildingQuery.attributes = this.req.params.fields.split(',');
         }
