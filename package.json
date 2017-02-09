@@ -1,6 +1,6 @@
 {
   "name": "brew-api",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "social beer api",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,13 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Gramatiik/brew-api.git"
+  },
+  "apidoc": {
+    "title": "brewAPI - Documentation",
+    "url": "http://example.com",
+    "template": {
+      "withGenerator": false
+    }
   },
   "author": "Stanyslas Bres <stanyslas.bres@gmail.com>",
   "license": "MIT",
