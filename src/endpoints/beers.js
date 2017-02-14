@@ -34,9 +34,9 @@ export default function beersEndpoints(server, passport) {
             }
         }
     },
-        passport.authenticate('basic', { session: false }),
-        function(req, res, next) {
-        if(req.params.id && req.params.id)
+        passport.authenticate('jwt', { session: false }),
+        (req, res, next) => {
+
             db.Beer.findOne({
                 where: {
                     id: req.params.id
