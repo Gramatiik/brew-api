@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "babel-watch": "babel src --out-dir build --copy-files && babel -w src/ -d build/ --source-maps"
+    "babel-watch": "babel src --out-dir build --copy-files && babel -w src/ -d build/ --source-maps",
+    "make-doc": "apidoc -i src/ -o doc/"
   },
   "repository": {
     "type": "git",
