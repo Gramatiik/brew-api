@@ -9,7 +9,7 @@ const BasicStrategy = passportHttp.BasicStrategy;
  * @param passport passport instance that will load anthentications
  * @param db database object
  */
-export default function (passport, db) {
+export default function loadAuthentications(passport, db) {
 
     passport.use(new BasicStrategy( (username, password, done) => {
             db.User.findOne({

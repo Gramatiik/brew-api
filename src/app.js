@@ -7,7 +7,7 @@ import usersEndpoints from "./endpoints/users";
 import beersEndpoints from "./endpoints/beers";
 import breweriesEndpoints from "./endpoints/breweries";
 import breweriesGeocodeEndpoint from "./endpoints/breweries-geocodes";
-import initializeAuthentications from "./authentications";
+import loadAuthentications from "./authentications";
 
 
 //create restify server
@@ -19,7 +19,7 @@ let server = restify.createServer({
 server.use(passport.initialize());
 
 //define passport authentication strategy
-initializeAuthentications(passport, db);
+loadAuthentications(passport, db);
 
 //setup validation engine
 server.use(restify.queryParser());
