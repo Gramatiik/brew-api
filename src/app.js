@@ -53,6 +53,16 @@ server.use( (req, res, next) => {
     return next();
 });
 
+//default 'welcome' endpoint
+server.get('/', (req,res, next) => {
+    res.send({
+        message: "Welcome to BrewAPI",
+        version: "1.0.0"
+    });
+
+    return next();
+});
+
 //Setup TEST users endpoint
 usersEndpoints(server);
 
