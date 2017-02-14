@@ -3,6 +3,7 @@ import restifyValidation from "node-restify-validation";
 import passport from "passport";
 import db from "./models";
 
+import authEndpoints from "./endpoints/auth";
 import usersEndpoints from "./endpoints/users";
 import beersEndpoints from "./endpoints/beers";
 import breweriesEndpoints from "./endpoints/breweries";
@@ -17,9 +18,6 @@ let server = restify.createServer({
 
 //initialize passport for protected endpoints
 server.use(passport.initialize());
-
-//define passport authentication strategy
-loadAuthentications(passport, db);
 
 //setup validation engine
 server.use(restify.queryParser());
@@ -49,6 +47,9 @@ server.get('/', (req,res, next) => {
     return next();
 });
 
+//define passport authentication strategy
+loadAuthentications(passport, db);
+
 //Setup TEST users endpoint
 usersEndpoints(server);
 
@@ -60,6 +61,9 @@ breweriesEndpoints(server);
 
 //setup breweries geocodes endpoints
 breweriesGeocodeEndpoint(server);
+
+//authentication endpoint
+authEndpoints(server);
 
 server.listen('9090', () => {
     console.log('%s listening at %s', server.name, server.url);

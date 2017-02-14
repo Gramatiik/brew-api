@@ -86,13 +86,16 @@ export default function breweriesEndpoints(server) {
         url: '/breweries',
         validation: {
             content: {
+                //required parameters
                 name: { isRequired: true },
                 address1: { isRequired: true, isAlphanumeric: true },
-                address2: { isRequired: false, isAlphanumeric: true },
                 city: { isRequired: true, isAlphanumeric: true },
+                country: { isRequired: true, isAlphanumeric: true },
+
+                //optional parameters
+                address2: { isRequired: false, isAlphanumeric: true },
                 state: { isRequired: false, isAlphanumeric: true },
                 code: { isRequired: false, isAlphanumeric: true },
-                country: { isRequired: true, isAlphanumeric: true },
                 phone: { isRequired: false, isAlphanumeric: true },
                 website: { isRequired: false, isAlphanumeric: true },
                 descript: { isRequired: false, isAlphanumeric: true },
@@ -102,7 +105,7 @@ export default function breweriesEndpoints(server) {
 
         let newBrewery = db.Brewery.build(req.body);
 
-        res.send(newBrewery)
+        res.send(newBrewery);
 
         return next();
     });
