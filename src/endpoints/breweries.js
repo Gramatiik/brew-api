@@ -1,7 +1,8 @@
 import db from "../models";
 import RequestBuilder from "../helpers/RequestBuilder";
+import restify from "restify";
 
-export default function breweriesEndpoints(server) {
+export default function breweriesEndpoints(server, passport) {
 
     /**
      * @api {get} /breweries/count get the count of breweries
@@ -101,14 +102,15 @@ export default function breweriesEndpoints(server) {
                 descript: { isRequired: false, isAlphanumeric: true },
             }
         }
-    }, (req, res, next) => {
+    },
+        passport.authenticate('jwt', { session: false }),
 
-        let newBrewery = db.Brewery.build(req.body);
+            (req, res, next) => {
 
-        res.send(newBrewery);
-
-        return next();
-    });
+            let newBrewery = db.Brewery.build(req.body);
+            res.send(newBrewery);
+            return next();
+        });
 
     /**
      * @api {get} /breweries/:id get a brewery informations by id
@@ -137,7 +139,7 @@ export default function breweriesEndpoints(server) {
             },
             queries: {
                 fields: { isRequired: false, regex: /^(([a-zA-Z0-9\-_],*)+|\*)$/, descriprion: "Fields to include in response (comma separated)"},
-                recursive: { isRequired: false, isBoolean: true}
+                recursive: { isRequired: false, isBoolean: true }
             }
         }
     }, (req, res, next) => {
