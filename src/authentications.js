@@ -7,7 +7,7 @@ const ExtractJwt = passportJWT.ExtractJwt;
 
 /**
  * Define here all authentication methods available for the API
- * @example usage in endpoitn file : "passport.authenticate('basic', { session: false })"
+ * @example usage in endpoint file : "passport.authenticate('basic', { session: false })"
  * to use basic authentication on this specific endpoint, you cancahnge 'basic' for any other authentication
  * method that was loaded here
  * @param passport passport instance that will load anthentications
@@ -37,10 +37,9 @@ export default function loadAuthentications(passport, db) {
     };
 
     passport.use( new JWTStrategy(params, (payload, done) => {
-        console.log(payload);
             db.User.findOne({
                 where: {
-                    id: payload.id,
+                    id: payload.id
                 }
             }).then( (user) => {
                 return done(null, user);

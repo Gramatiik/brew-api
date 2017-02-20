@@ -57,10 +57,10 @@ usersEndpoints(server);
 beersEndpoints(server, passport);
 
 //setup breweries endpoints
-breweriesEndpoints(server);
+breweriesEndpoints(server, passport);
 
 //setup breweries geocodes endpoints
-breweriesGeocodeEndpoint(server);
+breweriesGeocodeEndpoint(server, passport);
 
 //authentication endpoint
 authEndpoints(server);

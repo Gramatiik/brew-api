@@ -2,7 +2,7 @@ import db from "../models";
 import restify from "restify";
 import RequestBuilder from "../helpers/RequestBuilder";
 
-export default function breweriesGeocodesEndpoints(server) {
+export default function breweriesGeocodesEndpoints(server, passport) {
 
     /**
      * @api {get} /breweries-locationd/count get the count of breweries-locationd

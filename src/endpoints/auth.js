@@ -32,7 +32,7 @@ export default function authEndpoints(server) {
                     });
                 } else {
                     //generate token
-                    let payload = { id: user.id };
+                    let payload = { id: user.id, username: user.username };
                     let token = jwt.encode(payload, jwtConfig["jwt-secret"]);
 
                     res.send({ token: token });
