@@ -45,7 +45,7 @@ export default function loadAuthentications(passport, db) {
                 return done(null, user);
             }).catch( (err) => {
                 console.log(err);
-                return done(null, false, { message: 'Invalid credentials.' });
+                return done(null, false, { message: 'Error occured while fetching user.' });
             });
         }
     ));
