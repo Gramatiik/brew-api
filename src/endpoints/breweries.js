@@ -45,11 +45,11 @@ export default function breweriesEndpoints(server, passport) {
         url: '/breweries',
         validation: {
             queries: {
-                fields: { isRequired: false, regex: /^(([a-zA-Z0-9\-_],*)+|\*)$/, descriprion: "Fields to include in response (comma separated)"},
+                fields: { isRequired: false, regex: /^(([a-zA-Z0-9\-_],*)+|\*)$/, description: "Fields to include in response (comma separated)"},
                 recursive: { isRequired: false, regex: /^(true|false)$/},
                 limit: { isRequired: false, isNumeric: true },
                 offset: { isRequired: false, isNumeric: true },
-                order: { isRequired: false, regex: /(^\w+:\w+$)/, descriprion: "<field>:<ordering>"}
+                order: { isRequired: false, regex: /(^\w+:\w+$)/, description: "<field>:<ordering>"}
             }
         }
     }, (req, res, next) => {
@@ -104,9 +104,8 @@ export default function breweriesEndpoints(server, passport) {
         }
     },
         passport.authenticate('jwt', { session: false }),
-
-            (req, res, next) => {
-
+        (req, res, next) => {
+            //TODO : save newly created brewery to database
             let newBrewery = db.Brewery.build(req.body);
             res.send(newBrewery);
             return next();

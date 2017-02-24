@@ -51,7 +51,7 @@ server.get('/', (req,res, next) => {
 loadAuthentications(passport, db);
 
 //Setup TEST users endpoint
-usersEndpoints(server);
+usersEndpoints(server, passport);
 
 //setup beers endpoints
 beersEndpoints(server, passport);
