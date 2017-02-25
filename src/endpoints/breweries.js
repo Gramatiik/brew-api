@@ -27,19 +27,7 @@ export default function breweriesEndpoints(server, passport) {
      * @apiGroup Breweries
      * @apiVersion 0.1.0
      * @apiSuccess {Object[]} Brewery Brewery response object
-     * @apiSuccess {Number}     Brewery.id id of the record
-     * @apiSuccess {String}     Brewery.name Name of this brewery
-     * @apiSuccess {String}     Brewery.address1 First address line
-     * @apiSuccess {String}     Brewery.address2 Second address line
-     * @apiSuccess {String}     Brewery.city City
-     * @apiSuccess {String}     Brewery.state State (if applicable)
-     * @apiSuccess {String}     Brewery.code ZIP code
-     * @apiSuccess {String}     Brewery.country Country
-     * @apiSuccess {String}     Brewery.phone Phone
-     * @apiSuccess {String}     Brewery.website Website
-     * @apiSuccess {String}     Brewery.descript Description
-     * @apiSuccess {Object}     Brewery.BreweryGeocode Geocode related object (if present)
-     * @apiSuccess {Object[]}     Brewery.Beers Beers that belong to this brewery
+     * @apiUse BreweryResponseFields
      */
     server.get({
         url: '/breweries',
@@ -82,6 +70,7 @@ export default function breweriesEndpoints(server, passport) {
      * @apiName PostBrewery
      * @apiGroup Breweries
      * @apiVersion 0.1.0
+     * @apiUse BreweryPostParameters
      */
     server.post({
         url: '/breweries',
@@ -116,19 +105,8 @@ export default function breweriesEndpoints(server, passport) {
      * @apiName GetBreweryId
      * @apiGroup Breweries
      * @apiVersion 0.1.0
-     *
      * @apiSuccess {Object} Brewery Brewery response object
-     * @apiSuccess {Number}     Brewery.id id of the record
-     * @apiSuccess {Number}     Brewery.name Name of this brewery
-     * @apiSuccess {Number}     Brewery.address1 First address line
-     * @apiSuccess {Number}     Brewery.address2 Second address line
-     * @apiSuccess {Number}     Brewery.city City
-     * @apiSuccess {String}     Brewery.state State (if applicable)
-     * @apiSuccess {String}     Brewery.code ZIP code
-     * @apiSuccess {String}     Brewery.country Country
-     * @apiSuccess {String}     Brewery.phone Phone
-     * @apiSuccess {String}     Brewery.website Website
-     * @apiSuccess {String}     Brewery.descript Description
+     * @apiUse BreweryResponseFields
      */
     server.get({
         url: '/breweries/:id',

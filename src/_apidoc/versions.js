@@ -1,1 +1,1 @@
-/* place version history for endpoints here */
+/* place version history */

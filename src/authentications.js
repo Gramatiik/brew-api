@@ -39,7 +39,8 @@ export default function loadAuthentications(passport, db) {
     passport.use( new JWTStrategy(params, (payload, done) => {
             db.User.findOne({
                 where: {
-                    id: payload.id
+                    id: payload.id,
+                    username: payload.username
                 }
             }).then( (user) => {
                 return done(null, user);

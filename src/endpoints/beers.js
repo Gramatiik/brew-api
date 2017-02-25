@@ -25,17 +25,8 @@ export default function beersEndpoints(server, passport) {
      * @apiName GetBeers
      * @apiGroup Beers
      * @apiVersion 0.1.0
-     * @apiSuccess {Object[]} Beer Beer response object
-     * @apiSuccess {Number}     Beer.id record id
-     * @apiSuccess {Number}     Beer.brewery_id id of related brewery
-     * @apiSuccess {String}     Beer.name Name
-     * @apiSuccess {String}     Beer.cat_id id of related category
-     * @apiSuccess {String}     Beer.style_id id of related style
-     * @apiSuccess {String}     Beer.abv Alchool by volume value
-     * @apiSuccess {String}     Beer.ibu International Bitterness Units
-     * @apiSuccess {String}     Beer.srm Standard Reference Method
-     * @apiSuccess {String}     Beer.upc Universal Product Code
-     * @apiSuccess {String}     Beer.descript Description
+     * @apiSuccess {Object[]} Beer list of beer response objects
+     * @apiUse BeerResponseFields
      */
     server.get({
         url: '/beers',
@@ -79,16 +70,7 @@ export default function beersEndpoints(server, passport) {
      * @apiGroup Beers
      * @apiVersion 0.1.0
      * @apiSuccess {Object} Beer Beer response object
-     * @apiSuccess {Number}     Beer.id record id
-     * @apiSuccess {Number}     Beer.brewery_id id of related brewery
-     * @apiSuccess {String}     Beer.name Name
-     * @apiSuccess {String}     Beer.cat_id id of related category
-     * @apiSuccess {String}     Beer.style_id id of related style
-     * @apiSuccess {String}     Beer.abv Alchool by volume value
-     * @apiSuccess {String}     Beer.ibu International Bitterness Units
-     * @apiSuccess {String}     Beer.srm Standard Reference Method
-     * @apiSuccess {String}     Beer.upc Universal Product Code
-     * @apiSuccess {String}     Beer.descript Description
+     * @apiUse BeerResponseFields
      */
     server.get({
         url: '/beers/:id',
@@ -120,21 +102,13 @@ export default function beersEndpoints(server, passport) {
     });
 
     /**
-     * @api {get} /beers/:id Update single
+     * @api {put} /beers/:id Update single
      * @apiName PutBeers
      * @apiGroup Beers
      * @apiVersion 0.1.0
      * @apiSuccess {Object} Beer Beer response object
-     * @apiSuccess {Number}     Beer.id record id
-     * @apiSuccess {Number}     Beer.brewery_id id of related brewery
-     * @apiSuccess {String}     Beer.name Name
-     * @apiSuccess {String}     Beer.cat_id id of related category
-     * @apiSuccess {String}     Beer.style_id id of related style
-     * @apiSuccess {String}     Beer.abv Alchool by volume value
-     * @apiSuccess {String}     Beer.ibu International Bitterness Units
-     * @apiSuccess {String}     Beer.srm Standard Reference Method
-     * @apiSuccess {String}     Beer.upc Universal Product Code
-     * @apiSuccess {String}     Beer.descript Description
+     * @apiuse BeerPutParameters
+     * @apiuse BeerResponseFields
      */
     server.put({
             url: '/beers/:id',

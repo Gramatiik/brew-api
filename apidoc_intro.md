@@ -1,7 +1,7 @@
 ---
 # Introduction
 
-## Filtering
+## Field Selection
 
 Every endpoint of the API (except count methods) has field selection enabled,
 to use field selection, set the **fields** parameter in yor query.
@@ -39,3 +39,7 @@ Endpoints with an array root element can be ordered.
 To enable ordering, use the **order** query parameter, with this form `field:type`.
 
 i.e. To get a list of beers in decreasing order of IBU you would simply write this : `/beers?order=ibu:desc`
+
+## Misc
+
+1. Every _POST_ and _PUT_ parameters are passed into body request.

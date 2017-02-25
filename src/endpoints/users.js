@@ -6,7 +6,7 @@ import md5 from "md5";
 export default function usersEndpoints(server, passport) {
 
     /**
-     * @api {get} /users/count get the count of users
+     * @api {get} /users/count Get count
      * @apiName GetUsersCount
      * @apiGroup Users
      * @apiVersion 0.1.0
@@ -23,11 +23,12 @@ export default function usersEndpoints(server, passport) {
     });
 
     /**
-     * @api {get} /users get multiple users informations
+     * @api {get} /users Get list
      * @apiName GetUsers
      * @apiGroup Users
      * @apiVersion 0.1.0
-     * @apiSuccess {Object[]} users informations
+     * @apiSuccess {Object[]} User
+     * @apiUse UserResponseFields
      */
     server.get({
             url: '/users',
@@ -70,11 +71,12 @@ export default function usersEndpoints(server, passport) {
         });
 
     /**
-     * @api {get} /users/name/:username get the user informations by username
+     * @api {get} /users/name/:username Get single - by username
      * @apiName GetUserByUsername
      * @apiGroup Users
      * @apiVersion 0.1.0
-     * @apiSuccess {Object} user informations
+     * @apiSuccess {Object} User
+     * @apiUse UserResponseFields
      */
     server.get({
             url: '/users/name/:username',
@@ -108,48 +110,12 @@ export default function usersEndpoints(server, passport) {
         });
 
     /**
-     * @api {post} /users create a new user
-     * @apiName PostUser
-     * @apiGroup Users
-     * @apiVersion 0.1.0
-     * @apiSuccess {Object} user informations
-     */
-    server.post({
-        url: '/users',
-        validation: {
-            content: {
-                //required parameters
-                username: { isRequired: true },
-                email: { isRequired: true, isEmail: true },
-                password: { isRequired: true }
-            }
-        }
-    }, (req, res, next) => {
-
-        //hash password before saving
-        req.body.password = md5(req.body.password);
-
-        db.User.build(req.body)
-            .save()
-            .then( (newUser) => {
-
-                res.send({
-                    status: 'success',
-                    message: 'new user created !'
-                });
-
-                return next();
-            }).catch( (err) => {
-                return next(err);
-            });
-    });
-
-    /**
-     * @api {get} /users/:id get the user informations by id
+     * @api {get} /users/:id Get single - by id
      * @apiName GetUserById
      * @apiGroup Users
      * @apiVersion 0.1.0
-     * @apiSuccess {Object} user informations
+     * @apiSuccess {Object} User
+     * @apiUse UserResponseFields
      */
     server.get({
             url: '/users/:id',
@@ -181,4 +147,42 @@ export default function usersEndpoints(server, passport) {
                 return next(err);
             });
         });
+
+    /**
+     * @api {post} /users Create single
+     * @apiName PostUser
+     * @apiGroup Users
+     * @apiVersion 0.1.0
+     * @apiSuccess {Object} User Created user informations
+     * @apiuse UserResponseFields
+     */
+    server.post({
+        url: '/users',
+        validation: {
+            content: {
+                //required parameters
+                username: { isRequired: true },
+                email: { isRequired: true, isEmail: true },
+                password: { isRequired: true }
+            }
+        }
+    }, (req, res, next) => {
+
+        //hash password before saving
+        req.body.password = md5(req.body.password);
+
+        db.User.build(req.body)
+            .save()
+            .then( (newUser) => {
+
+                res.send({
+                    status: 'success',
+                    message: 'new user created !'
+                });
+
+                return next();
+            }).catch( (err) => {
+            return next(err);
+        });
+    });
 }
