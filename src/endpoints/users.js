@@ -124,7 +124,6 @@ export default function usersEndpoints(server, passport) {
             }
         }
     }, (req, res, next) => {
-        //TODO : check for user unicity
         db.User.build(req.body)
             .save()
             .then( (newUser) => {
