@@ -1,6 +1,7 @@
 import db from "../models";
 import RequestBuilder from "../helpers/RequestBuilder";
 import restify from "restify";
+import md5 from "md5";
 
 export default function usersEndpoints(server, passport) {
 
@@ -124,10 +125,19 @@ export default function usersEndpoints(server, passport) {
             }
         }
     }, (req, res, next) => {
+
+        //hash password before saving
+        req.body.password = md5(req.body.password);
+
         db.User.build(req.body)
             .save()
             .then( (newUser) => {
-                res.send(newUser);
+
+                res.send({
+                    status: 'success',
+                    message: 'new user created !'
+                });
+
                 return next();
             }).catch( (err) => {
                 return next(err);

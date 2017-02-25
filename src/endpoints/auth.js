@@ -1,5 +1,6 @@
 import db from "../models";
 import jwt from "jwt-simple";
+import md5 from "md5";
 let jwtConfig = require(__dirname + "/../config/jwt-config.json");
 
 export default function authEndpoints(server) {
@@ -23,7 +24,7 @@ export default function authEndpoints(server) {
             db.User.findOne({
                 where: {
                     username: username,
-                    password: password
+                    password: md5(password)
                 }
             }).then( (user) => {
                 if(!user) {
@@ -36,7 +37,7 @@ export default function authEndpoints(server) {
 
                     let payload = {
                         iat: now,
-                        exp: now + 60*60,
+                        exp: now + 60*60, //TODO : make expiration time configurable
                         id: user.id,
                         username: user.username
                     };
