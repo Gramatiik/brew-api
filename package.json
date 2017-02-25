@@ -27,6 +27,7 @@
   "homepage": "https://github.com/Gramatiik/brew-api#readme",
   "dependencies": {
     "jwt-simple": "^0.5.1",
+    "md5": "^2.2.1",
     "mysql": "^2.13.0",
     "node-restify-validation": "^1.1.1",
     "passport": "^0.3.2",
