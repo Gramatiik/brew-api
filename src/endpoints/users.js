@@ -27,7 +27,7 @@ export default function usersEndpoints(server, passport) {
      * @apiName GetUsers
      * @apiGroup Users
      * @apiVersion 0.1.0
-     * @apiSuccess {Array<Object>} users informations
+     * @apiSuccess {Object[]} users informations
      */
     server.get({
             url: '/users',
