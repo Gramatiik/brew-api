@@ -5,7 +5,7 @@ import restify from "restify";
 export default function beersEndpoints(server, passport) {
 
     /**
-     * @api {get} /beers/count number of beers
+     * @api {get} /beers/count Get count
      * @apiName GetBeersCount
      * @apiGroup Beers
      * @apiVersion 0.1.0
@@ -21,7 +21,7 @@ export default function beersEndpoints(server, passport) {
     });
 
     /**
-     * @api {get} /beers get a list of beers
+     * @api {get} /beers Get list
      * @apiName GetBeers
      * @apiGroup Beers
      * @apiVersion 0.1.0
@@ -74,11 +74,21 @@ export default function beersEndpoints(server, passport) {
     });
 
     /**
-     * @api {get} /beers/:id get beer informations by id
+     * @api {get} /beers/:id Get single
      * @apiName GetBeer
      * @apiGroup Beers
      * @apiVersion 0.1.0
-     * @apiSuccess {BeerObject} beer beer object (defined before)
+     * @apiSuccess {Object} Beer Beer response object
+     * @apiSuccess {Number}     Beer.id record id
+     * @apiSuccess {Number}     Beer.brewery_id id of related brewery
+     * @apiSuccess {String}     Beer.name Name
+     * @apiSuccess {String}     Beer.cat_id id of related category
+     * @apiSuccess {String}     Beer.style_id id of related style
+     * @apiSuccess {String}     Beer.abv Alchool by volume value
+     * @apiSuccess {String}     Beer.ibu International Bitterness Units
+     * @apiSuccess {String}     Beer.srm Standard Reference Method
+     * @apiSuccess {String}     Beer.upc Universal Product Code
+     * @apiSuccess {String}     Beer.descript Description
      */
     server.get({
         url: '/beers/:id',
@@ -110,11 +120,21 @@ export default function beersEndpoints(server, passport) {
     });
 
     /**
-     * @api {get} /beers/:id update beer informations
+     * @api {get} /beers/:id Update single
      * @apiName PutBeers
      * @apiGroup Beers
      * @apiVersion 0.1.0
-     * @apiSuccess {BeerObject} updated beer (defined before)
+     * @apiSuccess {Object} Beer Beer response object
+     * @apiSuccess {Number}     Beer.id record id
+     * @apiSuccess {Number}     Beer.brewery_id id of related brewery
+     * @apiSuccess {String}     Beer.name Name
+     * @apiSuccess {String}     Beer.cat_id id of related category
+     * @apiSuccess {String}     Beer.style_id id of related style
+     * @apiSuccess {String}     Beer.abv Alchool by volume value
+     * @apiSuccess {String}     Beer.ibu International Bitterness Units
+     * @apiSuccess {String}     Beer.srm Standard Reference Method
+     * @apiSuccess {String}     Beer.upc Universal Product Code
+     * @apiSuccess {String}     Beer.descript Description
      */
     server.put({
             url: '/beers/:id',
@@ -144,12 +164,14 @@ export default function beersEndpoints(server, passport) {
                 include: [db.Brewery, db.Category, db.Style]
             }).then( (beer) => {
                 if(!beer) {
-                    let error = new restify.NotFoundError("Requested beer was not found");
-                    console.log(error);
-                    res.send(error);
+                    res.send(new restify.NotFoundError("Requested beer was not found"));
                 } else {
 
-                    res.send(beer.get({plain: true}));
+                    //update fields
+                    beer.update(req.params).then( updatedBeer => res.send(updatedBeer) )
+                        .catch( err => { return next(err) } );
+
+                    res.send(req.params);
                 }
                 return next();
             }).catch( (err) => {

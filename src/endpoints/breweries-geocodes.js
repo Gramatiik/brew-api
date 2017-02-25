@@ -5,7 +5,7 @@ import RequestBuilder from "../helpers/RequestBuilder";
 export default function breweriesGeocodesEndpoints(server, passport) {
 
     /**
-     * @api {get} /breweries-locationd/count get the count of breweries-locationd
+     * @api {get} /breweries-locationd/count Get count
      * @apiName GetBreweriesLocationsCount
      * @apiGroup BreweriesLocations
      * @apiVersion 0.1.0
@@ -22,8 +22,8 @@ export default function breweriesGeocodesEndpoints(server, passport) {
     });
 
     /**
-     * @api {get} /breweries-locations get geolocation informations of a brewery
-     * @apiName GetBreweriesLocationsId
+     * @api {get} /breweries-locations Get list
+     * @apiName GetBreweriesLocations
      * @apiGroup BreweriesLocations
      * @apiVersion 0.1.0
      *
@@ -61,7 +61,7 @@ export default function breweriesGeocodesEndpoints(server, passport) {
         });
 
     /**
-     * @api {get} /breweries-locations/:brewery_id get geolocation informations of a brewery
+     * @api {get} /breweries-locations/:brewery_id Get single
      * @apiName GetBreweriesLocationsId
      * @apiGroup BreweriesLocations
      * @apiVersion 0.1.0

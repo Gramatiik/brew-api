@@ -5,7 +5,7 @@ import restify from "restify";
 export default function breweriesEndpoints(server, passport) {
 
     /**
-     * @api {get} /breweries/count get the count of breweries
+     * @api {get} /breweries/count Get count
      * @apiName GetBreweriesCount
      * @apiGroup Breweries
      * @apiVersion 0.1.0
@@ -22,7 +22,7 @@ export default function breweriesEndpoints(server, passport) {
     });
 
     /**
-     * @api {get} /breweries get a list of breweries
+     * @api {get} /breweries Get list
      * @apiName GetBrewery
      * @apiGroup Breweries
      * @apiVersion 0.1.0
@@ -78,7 +78,7 @@ export default function breweriesEndpoints(server, passport) {
     });
 
     /**
-     * @api {post} /breweries add a new brewery
+     * @api {post} /breweries Add single
      * @apiName PostBrewery
      * @apiGroup Breweries
      * @apiVersion 0.1.0
@@ -112,7 +112,7 @@ export default function breweriesEndpoints(server, passport) {
         });
 
     /**
-     * @api {get} /breweries/:id get a brewery informations by id
+     * @api {get} /breweries/:id Get single
      * @apiName GetBreweryId
      * @apiGroup Breweries
      * @apiVersion 0.1.0
