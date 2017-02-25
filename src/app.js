@@ -3,6 +3,10 @@ import restifyValidation from "node-restify-validation";
 import passport from "passport";
 import db from "./models";
 
+//error handling
+import handlerErrors from "./errors/handleErrors";
+
+//endpoints
 import authEndpoints from "./endpoints/auth";
 import usersEndpoints from "./endpoints/users";
 import beersEndpoints from "./endpoints/beers";
@@ -65,6 +69,10 @@ breweriesGeocodeEndpoint(server, passport);
 //authentication endpoint
 authEndpoints(server);
 
+//Catch errors
+handlerErrors(server);
+
+//launch server !
 server.listen('9090', () => {
     console.log('%s listening at %s', server.name, server.url);
 });
