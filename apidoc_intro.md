@@ -20,3 +20,22 @@ to use pagination, set **limit** and **offset** query parameters in your request
 usage : limit and offset takes only positive numbers  
 i.e. to get 5 beers starting at beer id 32 you simply do`/beers?limit=5&offset=32`.  
 Every endpoint has default and maximum limits that are documented below.
+
+## Recursivity
+
+Linked modeles can be fetched through a single endpoint to avoid multiple calls to the API.
+By default linked models are included in the response but you can tell the API not to fetch them if you don't need them.
+
+Use the **recursivity** parameter to get linked models or not, it takes a boolean.
+
+i.e. `/breweries?recursivity=false` if you don't want associated beers and brewery geoposition.
+
+For the moment you cannot select which associated model you want to get.
+
+## Ordering
+
+Endpoints with an array root element can be ordered.
+
+To enable ordering, use the **order** query parameter, with this form `field:type`.
+
+i.e. To get a list of beers in decreasing order of IBU you would simply write this : `/beers?order=ibu:desc`
