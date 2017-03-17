@@ -54,7 +54,7 @@ server.get('/', (req,res, next) => {
 //define passport authentication strategy
 loadAuthentications(passport, db);
 
-//Setup TEST users endpoint
+//Setup users endpoint
 usersEndpoints(server, passport);
 
 //setup beers endpoints

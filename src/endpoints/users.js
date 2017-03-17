@@ -12,7 +12,12 @@ export default function usersEndpoints(server, passport) {
      * @apiVersion 0.1.0
      * @apiSuccess {Number} count number of users
      */
-    server.get('/users/count', (req, res, next) => {
+    server.get('/users/count',
+
+        //this endpoint needs jwt token
+        passport.authenticate('jwt', { session: false }),
+
+        (req, res, next) => {
         db.User.count().then( function(count) {
             console.log(count);
             res.send({count: count});
@@ -34,26 +39,25 @@ export default function usersEndpoints(server, passport) {
             url: '/users',
             validation: {
                 queries: {
-                    fields: { isRequired: false, regex: /^(([a-zA-Z0-9\-_],*)+|\*)$/, description: "Fields to include in response (comma separated)"},
-                    recursive: { isRequired: false, regex: /^(true|false)$/},
+                    fields: { isRequired: false, regex: /^(([a-zA-Z0-9\-_],*)+|\*)$/ },
+                    recursive: { isRequired: false, regex: /^(true|false)$/ },
                     limit: { isRequired: false, isNumeric: true },
                     offset: { isRequired: false, isNumeric: true },
-                    order: { isRequired: false, regex: /(^\w+:\w+$)/, description: "<field>:<ordering>"}
+                    order: { isRequired: false, regex: /(^\w+:\w+$)/ }
                 }
             }
-        }, (req, res, next) => {
+        },
 
-            //enable jwt authentication for this endpoint
-            passport.authenticate('jwt', { session: false }, (info, user, err) => {
-                if(err) return next(err);
-            })(req, res, next);
+        //this endpoint needs jwt token
+        passport.authenticate('jwt', { session: false }),
+
+        (req, res, next) => {
 
             let query = new RequestBuilder(req, db, 'User', {
                 attributes: [ 'id', 'username', 'email' ], //these are default fields
                 defaultLimit: 10,
                 maxLimit: 25
             })  .enableFieldsSelection()
-                .enableRecursivity()
                 .enablePagination()
                 .enableOrdering()
                 .finalize();
@@ -124,12 +128,12 @@ export default function usersEndpoints(server, passport) {
                     id: { isRequired: true, isNumeric: true }
                 }
             }
-        }, (req, res, next) => {
+        },
 
-            //enable jwt authentication for this endpoint
-            passport.authenticate('jwt', { session: false }, (info, user, err) => {
-                if(err) return next(err);
-            })(req, res, next);
+        //this endpoint needs jwt token
+        passport.authenticate('jwt', { session: false }),
+
+        (req, res, next) => {
 
             db.User.findOne({
                 where: {
@@ -154,7 +158,7 @@ export default function usersEndpoints(server, passport) {
      * @apiGroup Users
      * @apiVersion 0.1.0
      * @apiSuccess {Object} User Created user informations
-     * @apiuse UserResponseFields
+     * @apiUse UserResponseFields
      */
     server.post({
         url: '/users',
@@ -166,7 +170,11 @@ export default function usersEndpoints(server, passport) {
                 password: { isRequired: true }
             }
         }
-    }, (req, res, next) => {
+    },
+        //this endpoint needs jwt token
+        passport.authenticate('jwt', { session: false }),
+
+        (req, res, next) => {
 
         //hash password before saving
         req.body.password = md5(req.body.password);
@@ -174,13 +182,57 @@ export default function usersEndpoints(server, passport) {
         db.User.build(req.body)
             .save()
             .then( (newUser) => {
+                res.send(newUser);
+            }).catch( (err) => {
+            return next(err);
+        });
+    });
 
-                res.send({
-                    status: 'success',
-                    message: 'new user created !'
-                });
+    /**
+     * @api {put} /users/:id Update single
+     * @apiName PutUser
+     * @apiGroup Users
+     * @apiVersion 0.1.0
+     * @apiSuccess {Object} User Updated user informations
+     * @apiUse UserResponseFields
+     * @apiuse UserUpdateParameters
+     */
+    server.put({
+        url: '/users/:id',
+        validation: {
+            resources: {
+                id: { isRequired: true, isNumeric: true }
+            },
+            content: {
+                username: { isRequired: false },
+                email: { isRequired: false, isEmail: true },
+                password: { isRequired: false }
+            }
+        }
+    },
+        //this endpoint needs jwt token
+        passport.authenticate('jwt', { session: false }),
 
-                return next();
+        (req, res, next) => {
+
+        //hash new password if present
+        if(req.body.password) req.body.password = md5(req.body.password);
+
+        db.User.findOne({
+            where: {
+                id: req.params.id
+            },
+            attributes: [ 'id', 'username', 'email' ] //these are default fields
+        })
+            .then( (user) => {
+                //update given fields
+                user.update(req.body)
+                    .then( (user) => {
+                        res.send(user);
+                        return next();
+                    }).catch( (err) => {
+                        return next(err);
+                    });
             }).catch( (err) => {
             return next(err);
         });
