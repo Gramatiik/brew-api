@@ -39,7 +39,8 @@ export default function authEndpoints(server) {
                         iat: now,
                         exp: now + 60*60, //TODO : make expiration time configurable
                         id: user.id,
-                        username: user.username
+                        username: user.username,
+                        role: user.role
                     };
 
                     let token = jwt.encode(payload, jwtConfig["jwt-secret"], 'HS256', {});

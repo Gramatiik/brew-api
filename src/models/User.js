@@ -12,6 +12,12 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: "",
             unique: true
         },
+        role: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: "",
+            unique: false
+        },
         email: {
             type: DataTypes.STRING,
             allowNull: false,

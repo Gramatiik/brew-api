@@ -24,7 +24,6 @@ export default function loadAuthentications(passport, db) {
             }).then( (user) => {
                 return done(null, user);
             }).catch( (err) => {
-                console.log(err);
                 return done(null, false, { message: 'Invalid credentials.' });
             });
         }
@@ -38,6 +37,7 @@ export default function loadAuthentications(passport, db) {
 
     passport.use( new JWTStrategy(params, (payload, done) => {
             db.User.findOne({
+                attributes: [ 'id', 'username', 'email', 'role' ], //these are default fields
                 where: {
                     id: payload.id,
                     username: payload.username

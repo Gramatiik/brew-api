@@ -40,21 +40,29 @@ export default function usersEndpoints(server, passport) {
             validation: {
                 queries: {
                     fields: { isRequired: false, regex: /^(([a-zA-Z0-9\-_],*)+|\*)$/ },
-                    recursive: { isRequired: false, regex: /^(true|false)$/ },
+                    recursive: { isRequired: false, regex: /^(true|false)$/},
                     limit: { isRequired: false, isNumeric: true },
                     offset: { isRequired: false, isNumeric: true },
                     order: { isRequired: false, regex: /(^\w+:\w+$)/ }
                 }
             }
         },
-
-        //this endpoint needs jwt token
-        passport.authenticate('jwt', { session: false }),
-
         (req, res, next) => {
 
+            //enable jwt authentication for this endpoint
+            passport.authenticate('jwt', { session: false }, (info, user, err) => {
+                if(err) return next(err);
+                req.user = user;
+            })(req, res, next);
+
+            //check if user group if authorized to access this endpoint
+            if(!['admin'].includes(req.user.role)) {
+                res.send(401, "Insufficient Permissions");
+                return next();
+            }
+
             let query = new RequestBuilder(req, db, 'User', {
-                attributes: [ 'id', 'username', 'email' ], //these are default fields
+                attributes: [ 'id', 'username', 'email', 'role' ], //these are default fields
                 defaultLimit: 10,
                 maxLimit: 25
             })  .enableFieldsSelection()
@@ -100,7 +108,7 @@ export default function usersEndpoints(server, passport) {
                 where: {
                     username: req.params.username
                 },
-                attributes: [ 'id', 'username', 'email' ] //these are default fields
+                attributes: [ 'id', 'username', 'email', 'role' ] //these are default fields
             }).then( (user) => {
                 if(!user) {
                     res.send(new restify.NotFoundError("Requested user was not found"));
@@ -139,7 +147,7 @@ export default function usersEndpoints(server, passport) {
                 where: {
                     id: req.params.id
                 },
-                attributes: [ 'id', 'username', 'email' ] //these are default fields
+                attributes: [ 'id', 'username', 'email', 'role' ] //these are default fields
             }).then( (user) => {
                 if(!user) {
                     res.send(new restify.NotFoundError("Requested user was not found"));
@@ -171,9 +179,6 @@ export default function usersEndpoints(server, passport) {
             }
         }
     },
-        //this endpoint needs jwt token
-        passport.authenticate('jwt', { session: false }),
-
         (req, res, next) => {
 
         //hash password before saving
@@ -210,10 +215,19 @@ export default function usersEndpoints(server, passport) {
             }
         }
     },
-        //this endpoint needs jwt token
-        passport.authenticate('jwt', { session: false }),
-
         (req, res, next) => {
+
+            //enable jwt authentication for this endpoint
+            passport.authenticate('jwt', { session: false }, (info, user, err) => {
+                if(err) return next(err);
+                req.user = user;
+            })(req, res, next);
+
+            //check if user attempts to edit his own data
+            if(req.params.id !== req.user.id) {
+                res.send(401, "Insufficient Permissions");
+                return next();
+            }
 
         //hash new password if present
         if(req.body.password) req.body.password = md5(req.body.password);
@@ -222,7 +236,7 @@ export default function usersEndpoints(server, passport) {
             where: {
                 id: req.params.id
             },
-            attributes: [ 'id', 'username', 'email' ] //these are default fields
+            attributes: [ 'id', 'username', 'email', 'role' ] //these are default fields
         })
             .then( (user) => {
                 //update given fields
