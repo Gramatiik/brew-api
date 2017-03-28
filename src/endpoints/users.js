@@ -52,34 +52,34 @@ export default function usersEndpoints(server, passport) {
             //enable jwt authentication for this endpoint
             passport.authenticate('jwt', { session: false }, (info, user, err) => {
                 if(err) return next(err);
-                req.user = user;
-            })(req, res, next);
 
-            //check if user group if authorized to access this endpoint
-            if(!['admin'].includes(req.user.role)) {
-                res.send(401, "Insufficient Permissions");
-                return next();
-            }
-
-            let query = new RequestBuilder(req, db, 'User', {
-                attributes: [ 'id', 'username', 'email', 'role' ], //these are default fields
-                defaultLimit: 10,
-                maxLimit: 25
-            })  .enableFieldsSelection()
-                .enablePagination()
-                .enableOrdering()
-                .finalize();
-
-            db.User.findAll(query).then( (users) => {
-                if(!users) {
-                    res.send(new restify.NotFoundError("No users were found..."));
-                } else {
-                    res.send(users);
+                //check if user group is authorized to access this endpoint
+                if(!['admin'].includes(user.role)) {
+                    res.send(401, "Insufficient Permissions");
+                    return next();
                 }
-                return next();
-            }).catch( (err) => {
-                return next(err);
-            });
+
+                let query = new RequestBuilder(req, db, 'User', {
+                    attributes: [ 'id', 'username', 'email', 'role' ], //these are default fields
+                    defaultLimit: 10,
+                    maxLimit: 25
+                })  .enableFieldsSelection()
+                    .enablePagination()
+                    .enableOrdering()
+                    .finalize();
+
+                db.User.findAll(query).then( (users) => {
+                    if(!users) {
+                        res.send(new restify.NotFoundError("No users were found..."));
+                    } else {
+                        res.send(users);
+                    }
+                    return next();
+                }).catch( (err) => {
+                    return next(err);
+                });
+
+            })(req, res, next);
         });
 
     /**
@@ -102,23 +102,24 @@ export default function usersEndpoints(server, passport) {
             //enable jwt authentication for this endpoint
             passport.authenticate('jwt', { session: false }, (info, user, err) => {
                 if(err) return next(err);
-            })(req, res, next);
 
-            db.User.findOne({
-                where: {
-                    username: req.params.username
-                },
-                attributes: [ 'id', 'username', 'email', 'role' ] //these are default fields
-            }).then( (user) => {
-                if(!user) {
-                    res.send(new restify.NotFoundError("Requested user was not found"));
-                } else {
-                    res.send(user.get({plain: true}));
-                }
-                return next();
-            }).catch( (err) => {
-                return next(err);
-            });
+                db.User.findOne({
+                    where: {
+                        username: req.params.username
+                    },
+                    attributes: [ 'id', 'username', 'email', 'role' ] //these are default fields
+                }).then( (user) => {
+                    if(!user) {
+                        res.send(new restify.NotFoundError("Requested user was not found"));
+                    } else {
+                        res.send(user.get({plain: true}));
+                    }
+                    return next();
+                }).catch( (err) => {
+                    return next(err);
+                });
+
+            })(req, res, next);
         });
 
     /**
@@ -137,27 +138,35 @@ export default function usersEndpoints(server, passport) {
                 }
             }
         },
-
-        //this endpoint needs jwt token
-        passport.authenticate('jwt', { session: false }),
-
         (req, res, next) => {
 
-            db.User.findOne({
-                where: {
-                    id: req.params.id
-                },
-                attributes: [ 'id', 'username', 'email', 'role' ] //these are default fields
-            }).then( (user) => {
-                if(!user) {
-                    res.send(new restify.NotFoundError("Requested user was not found"));
-                } else {
-                    res.send(user.get({plain: true}));
+            //enable jwt authentication for this endpoint
+            passport.authenticate('jwt', { session: false }, (info, user, err) => {
+                if (err) return next(err);
+
+                //check if user group is authorized to access this endpoint
+                if (!['admin'].includes(user.role)) {
+                    res.send(401, "Insufficient Permissions");
+                    return next();
                 }
-                return next();
-            }).catch( (err) => {
-                return next(err);
-            });
+
+                db.User.findOne({
+                    where: {
+                        id: req.params.id
+                    },
+                    attributes: [ 'id', 'username', 'email', 'role' ] //these are default fields
+                }).then( (user) => {
+                    if(!user) {
+                        res.send(new restify.NotFoundError("Requested user was not found"));
+                    } else {
+                        res.send(user.get({plain: true}));
+                    }
+                    return next();
+                }).catch( (err) => {
+                    return next(err);
+                });
+
+            })(req, res, next);
         });
 
     /**
@@ -221,34 +230,35 @@ export default function usersEndpoints(server, passport) {
             passport.authenticate('jwt', { session: false }, (info, user, err) => {
                 if(err) return next(err);
                 req.user = user;
-            })(req, res, next);
 
-            //check if user attempts to edit his own data
-            if(req.params.id !== req.user.id) {
-                res.send(401, "Insufficient Permissions");
-                return next();
-            }
+                //check if user attempts to edit his own data
+                if(req.params.id !== user.id) {
+                    res.send(401, "Insufficient Permissions");
+                    return next();
+                }
 
-        //hash new password if present
-        if(req.body.password) req.body.password = md5(req.body.password);
+                //hash new password if present
+                    if(req.body.password) req.body.password = md5(req.body.password);
 
-        db.User.findOne({
-            where: {
-                id: req.params.id
-            },
-            attributes: [ 'id', 'username', 'email', 'role' ] //these are default fields
-        })
-            .then( (user) => {
-                //update given fields
-                user.update(req.body)
+                db.User.findOne({
+                    where: {
+                        id: req.params.id
+                    },
+                    attributes: [ 'id', 'username', 'email', 'role' ] //these are default fields
+                })
                     .then( (user) => {
-                        res.send(user);
-                        return next();
+                        //update given fields
+                        user.update(req.body)
+                            .then( (user) => {
+                                res.send(user);
+                                return next();
+                            }).catch( (err) => {
+                            return next(err);
+                        });
                     }).catch( (err) => {
-                        return next(err);
-                    });
-            }).catch( (err) => {
-            return next(err);
-        });
+                    return next(err);
+                });
+
+            })(req, res, next);
     });
 }

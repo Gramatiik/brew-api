@@ -8,67 +8,63 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		name: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: false
 		},
 		address1: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: false
 		},
 		address2: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: true,
+			defaultValue: null
 		},
 		city: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: false
 		},
 		state: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: true,
+            defaultValue: null
 		},
 		code: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: true,
+            defaultValue: null
 		},
 		country: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: false
 		},
 		phone: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: true,
+			defaultValue: null
 		},
 		website: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: true,
+			defaultValue: null
 		},
 		filepath: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: true,
+			defaultValue: null
 		},
 		descript: {
 			type: DataTypes.TEXT,
-			allowNull: false
+			allowNull: true
 		},
 		add_user: {
 			type: DataTypes.INTEGER(11),
-			allowNull: false,
-			defaultValue: "0"
+			allowNull: true,
+			defaultValue: null
 		},
 		last_mod: {
 			type: DataTypes.DATE,
-			allowNull: false,
-			defaultValue: "0000-00-00 00:00:00"
+			allowNull: true,
+			defaultValue: null
 		}
 	}, {
 		tableName: 'breweries',

@@ -78,7 +78,7 @@ export default function breweriesEndpoints(server, passport) {
             content: {
                 //required parameters
                 name: { isRequired: true },
-                address1: { isRequired: true, isAlphanumeric: true },
+                address1: { isRequired: true },
                 city: { isRequired: true, isAlphanumeric: true },
                 country: { isRequired: true, isAlphanumeric: true },
 
@@ -92,12 +92,27 @@ export default function breweriesEndpoints(server, passport) {
             }
         }
     },
-        passport.authenticate('jwt', { session: false }),
         (req, res, next) => {
-            //TODO : save newly created brewery to database
-            let newBrewery = db.Brewery.build(req.body);
-            res.send(newBrewery);
-            return next();
+
+            //enable jwt authentication for this endpoint
+            passport.authenticate('jwt', { session: false }, (info, user, err) => {
+                if(err) return next(err);
+
+                //check if user attempts to edit his own data
+                if(!['admin','contributor'].includes(user.role)) {
+                    res.send(401, "Insufficient Permissions");
+                    return next();
+                }
+
+                db.Brewery.build(req.body)
+                    .save()
+                    .then( (newBrewery) => {
+                        res.send(newBrewery);
+                    }).catch( (err) => {
+                    return next(err);
+                });
+
+            })(req, res, next);
         });
 
     /**
@@ -142,5 +157,67 @@ export default function breweriesEndpoints(server, passport) {
         });
 
     });
+
+
+    /**
+     * @api {put} /breweries Update single
+     * @apiName PutBrewery
+     * @apiGroup Breweries
+     * @apiVersion 0.1.0
+     * @apiUse BreweryPutParameters
+     */
+    server.put({
+            url: '/breweries/:id',
+            validation: {
+                resources: {
+                    id: { isRequired: true, isNumeric: true }
+                },
+                content: {
+                    name: { isRequired: false },
+                    address1: { isRequired: false, isAlphanumeric: true },
+                    city: { isRequired: false, isAlphanumeric: true },
+                    country: { isRequired: false, isAlphanumeric: true },
+                    address2: { isRequired: false, isAlphanumeric: true },
+                    state: { isRequired: false, isAlphanumeric: true },
+                    code: { isRequired: false, isAlphanumeric: true },
+                    phone: { isRequired: false, isAlphanumeric: true },
+                    website: { isRequired: false, isAlphanumeric: true },
+                    descript: { isRequired: false, isAlphanumeric: true },
+                }
+            }
+        },
+        (req, res, next) => {
+
+            //enable jwt authentication for this endpoint
+            passport.authenticate('jwt', { session: false }, (info, user, err) => {
+                if(err) return next(err);
+
+                //check if user attempts to edit his own data
+                if(!['admin','contributor'].includes(user.role)) {
+                    res.send(401, "Insufficient Permissions");
+                    return next();
+                }
+
+                db.Brewery.findOne({
+                    where: {
+                        id: req.params.id
+                    }
+                }).then( (brewery) => {
+                    if(!brewery) {
+                        res.send(new restify.NotFoundError("Requested Brewery was not found"));
+                    } else {
+                        brewery.update(req.params).
+                        then( (updatedBrewery) => {
+                            res.send(updatedBrewery);
+                        }).catch( (err) => {
+                            return next(err);
+                        })
+                    }
+                }).catch( (err) => {
+                    return next(err);
+                });
+
+            })(req, res, next);
+        });
 
 }

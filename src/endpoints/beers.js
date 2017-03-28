@@ -102,8 +102,61 @@ export default function beersEndpoints(server, passport) {
     });
 
     /**
+     * @api {post} /beers/:id Update single
+     * @apiName PostBeer
+     * @apiGroup Beers
+     * @apiVersion 0.1.0
+     * @apiSuccess {Object} Beer Beer response object
+     * @apiuse BeerPutParameters
+     * @apiuse BeerResponseFields
+     */
+    server.post({
+            url: '/beers',
+            validation: {
+                content: {
+                    //required parameters
+                    name:           { isRequired: true },
+
+                    //optional parameters
+                    brewery_id:     { isRequired: false, isNumeric: true },
+                    cat_id:         { isRequired: false, isNumeric: true },
+                    style_id:       { isRequired: false, isNumeric: true },
+                    abv:            { isRequired: false, isNumeric: true },
+                    ibu:            { isRequired: false, isNumeric: true },
+                    srm:            { isRequired: false, isNumeric: true },
+                    upc:            { isRequired: false, isNumeric: true },
+                    descript:       { isRequired: false }
+                }
+            }
+        },
+
+        (req, res, next) => {
+
+            //enable jwt authentication for this endpoint
+            passport.authenticate('jwt', { session: false }, (info, user, err) => {
+                if(err) return next(err);
+                req.user = user;
+            })(req, res, next);
+
+            //check if user group if authorized to access this endpoint
+            if(!['admin', 'contributor'].includes(req.user.role)) {
+                res.send(401, "Insufficient Permissions");
+                return next();
+            }
+
+            db.Beer.build(req.body)
+                .save()
+                .then( (newBeer) => {
+                    res.send(newBeer);
+                    return next();
+                }).catch( (err) => {
+                    return next(err);
+            });
+        });
+
+    /**
      * @api {put} /beers/:id Update single
-     * @apiName PutBeers
+     * @apiName PutBeer
      * @apiGroup Beers
      * @apiVersion 0.1.0
      * @apiSuccess {Object} Beer Beer response object
@@ -140,12 +193,12 @@ export default function beersEndpoints(server, passport) {
                 if(!beer) {
                     res.send(new restify.NotFoundError("Requested beer was not found"));
                 } else {
-
-                    //update fields
-                    beer.update(req.params).then( updatedBeer => res.send(updatedBeer) )
-                        .catch( err => { return next(err) } );
-
-                    res.send(req.params);
+                    beer.update(req.params).
+                    then( (updatedBeer) => {
+                        res.send(updatedBeer);
+                    }).catch( (err) => {
+                        return next(err);
+                    });
                 }
                 return next();
             }).catch( (err) => {

@@ -103,4 +103,56 @@ export default function breweriesGeocodesEndpoints(server, passport) {
                     return next(err);
                 });
         });
+
+
+    /**
+     * @api {get} /breweries-locations/:brewery_id Add single
+     * @apiName PostBreweriesLocation
+     * @apiGroup BreweriesLocations
+     * @apiVersion 0.1.0
+     *
+     * @apiSuccess {Object} BreweryGeocode
+     * @apiSuccess {Number}     BreweryGeocode.id id of this location item
+     * @apiSuccess {Number}     BreweryGeocode.brewery_id brewery id for this location
+     * @apiSuccess {Number}     BreweryGeocode.latitude latitude value
+     * @apiSuccess {Number}     BreweryGeocode.longitude longitude value
+     * @apiSuccess {String}     BreweryGeocode.accuracy type of accuracy for the measurement
+     */
+    server.get({
+            url: '/breweries-locations/:breweryId',
+            validation: {
+                content: {
+                    //required parameters
+                    brewery_id: { isRequired: true, isNumeric: true },
+                    latitude: { isRequired: true, isNumeric: true },
+                    longitude: { isRequired: true, isNumeric: true },
+
+                    //optional parameters
+                    accuracy:   { isRequired: false }
+                }
+            }
+        },
+        function(req, res, next) {
+
+            //enable jwt authentication for this endpoint
+            passport.authenticate('jwt', { session: false }, (info, user, err) => {
+                if(err) return next(err);
+
+                //check if user attempts to edit his own data
+                if(!['admin','contributor'].includes(user.role)) {
+                    res.send(401, "Insufficient Permissions");
+                    return next();
+                }
+
+                db.BreweryGeocode.build(req.body)
+                    .save( (newBrewery) => {
+                        res.send(newBrewery);
+                        return next();
+                    }).catch( (err) => {
+                    return next(err);
+                });
+
+            })(req, res, next);
+        });
+
 }
