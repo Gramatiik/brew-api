@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 module.exports = function (sequelize, DataTypes) {
 	return sequelize.define('Category', {
@@ -12,11 +12,6 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING,
 			allowNull: false,
 			defaultValue: ""
-		},
-		last_mod: {
-			type: DataTypes.DATE,
-			allowNull: false,
-			defaultValue: "0000-00-00 00:00:00"
 		}
 	}, {
 		tableName: 'categories',

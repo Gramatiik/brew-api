@@ -54,16 +54,6 @@ module.exports = function(sequelize, DataTypes) {
 		descript: {
 			type: DataTypes.TEXT,
 			allowNull: false
-		},
-        add_user: {
-			type: DataTypes.INTEGER(11),
-			allowNull: false,
-			defaultValue: "0"
-		},
-        last_mod: {
-			type: DataTypes.DATE,
-			allowNull: false,
-			defaultValue: "0000-00-00 00:00:00"
 		}
 	}, {
 		tableName: 'beers',
