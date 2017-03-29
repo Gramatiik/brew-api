@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "localuser",
+    "password": "eclipse",
+    "database": "brewAPI",
+    "port": 8889,
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "localuser",
+    "password": "eclipse",
+    "database": "brewAPI",
+    "host": "127.0.0.1",
+    "port": 8889,
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "localuser",
+    "password": "eclipse",
+    "database": "brewAPI",
+    "host": "127.0.0.1",
+    "port": 8889,
+    "dialect": "mysql"
+  }
+}
