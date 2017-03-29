@@ -23,8 +23,7 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		accuracy: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: true
 		}
 	}, {
 		tableName: 'breweries_geocode',
