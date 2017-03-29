@@ -215,7 +215,7 @@ export default function usersEndpoints(server, passport) {
         url: '/users/:id',
         validation: {
             resources: {
-                id: { isRequired: true, isNumeric: true }
+                id: { isRequired: true, isRegex: /^([0-9]+|me)$/ }
             },
             content: {
                 username: { isRequired: false },
@@ -229,16 +229,19 @@ export default function usersEndpoints(server, passport) {
             //enable jwt authentication for this endpoint
             passport.authenticate('jwt', { session: false }, (info, user, err) => {
                 if(err) return next(err);
-                req.user = user;
 
-                //check if user attempts to edit his own data
-                if(req.params.id !== user.id) {
+                if (req.params.id === "me") req.params.id = user.id;
+
+                //check if user attempts to edit his own data or is member of admin group
+                if(req.params.id !== user.id || !['admin'].includes(user.role)) {
                     res.send(401, "Insufficient Permissions");
                     return next();
                 }
 
+                if(req.body.role) delete req.body.role;
+
                 //hash new password if present
-                    if(req.body.password) req.body.password = md5(req.body.password);
+                if(req.body.password) req.body.password = md5(req.body.password);
 
                 db.User.findOne({
                     where: {
