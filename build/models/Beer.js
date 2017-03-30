@@ -30,32 +30,27 @@ module.exports = function (sequelize, DataTypes) {
 		},
 		abv: {
 			type: DataTypes.FLOAT,
-			allowNull: false,
-			defaultValue: "0"
+			allowNull: false
 		},
 		ibu: {
 			type: DataTypes.FLOAT,
-			allowNull: false,
-			defaultValue: "0"
+			allowNull: true
 		},
 		srm: {
 			type: DataTypes.FLOAT,
-			allowNull: false,
-			defaultValue: "0"
+			allowNull: true
 		},
 		upc: {
 			type: DataTypes.INTEGER(40),
-			allowNull: false,
-			defaultValue: "0"
+			allowNull: true
 		},
 		filepath: {
 			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
+			allowNull: true
 		},
 		descript: {
 			type: DataTypes.TEXT,
-			allowNull: false
+			allowNull: true
 		}
 	}, {
 		tableName: 'beers',
