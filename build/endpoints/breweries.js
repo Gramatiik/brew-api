@@ -164,11 +164,60 @@ function breweriesEndpoints(server, passport) {
     });
 
     /**
+     * @api {delete} /breweries/:id Delete single
+     * @apiName DeleteBreweryId
+     * @apiGroup Breweries
+     * @apiVersion 0.1.0
+     * @apiUse BreweryResponseFields
+     */
+    server.del({
+        url: '/breweries/:id',
+        validation: {
+            resources: {
+                id: { isRequired: true, isNumeric: true }
+            },
+            queries: {
+                fields: { isRequired: false, regex: /^(([a-zA-Z0-9\-_],*)+|\*)$/, descriprion: "Fields to include in response (comma separated)" },
+                recursive: { isRequired: false, isBoolean: true }
+            }
+        }
+    }, function (req, res, next) {
+
+        //enable jwt authentication for this endpoint
+        passport.authenticate('jwt', { session: false }, function (info, user, err) {
+            if (err) return next(err);
+
+            //check if user attempts to edit his own data
+            if (!['admin'].includes(user.role)) {
+                res.send(401, "Insufficient Permissions");
+                return next();
+            }
+
+            _models2.default.Brewery.destroy({
+                where: {
+                    id: req.params.id
+                }
+            }).then(function (status) {
+                if (!status) {
+                    res.send(new _restify2.default.NotFoundError("Unable to delete, requested Brewery was not found..."));
+                } else {
+                    res.send({
+                        status: "OK",
+                        message: "Successfully deleted requested beer"
+                    });
+                }
+                return next();
+            }).catch(function (err) {
+                return next(err);
+            });
+        })(req, res, next);
+    });
+
+    /**
      * @api {put} /breweries Update single
      * @apiName PutBrewery
      * @apiGroup Breweries
      * @apiVersion 0.1.0
-     * @apiUse BreweryPutParameters
      */
     server.put({
         url: '/breweries/:id',
@@ -211,6 +260,7 @@ function breweriesEndpoints(server, passport) {
                 } else {
                     brewery.update(req.params).then(function (updatedBrewery) {
                         res.send(updatedBrewery);
+                        return next();
                     }).catch(function (err) {
                         return next(err);
                     });

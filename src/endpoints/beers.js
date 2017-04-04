@@ -51,7 +51,7 @@ export default function beersEndpoints(server, passport) {
             .enableOrdering()
             .finalize();
 
-        db.Brewery.findAll(query).then( (breweries) => {
+        db.Beer.findAll(query).then( (breweries) => {
             if (!breweries) {
                 res.send(new restify.NotFoundError("No beers were found..."));
             } else {
@@ -82,12 +82,17 @@ export default function beersEndpoints(server, passport) {
     },
 
         (req, res, next) => {
-            db.Beer.findOne({
+
+            let query = new RequestBuilder(req, db, 'Beer', {
+                include: [db.Brewery, db.Category, db.Style],
                 where: {
-                    id: req.params.id
-                },
-                include: [db.Brewery, db.Category, db.Style]
-            }).then( (beer) => {
+                    id: req.param.id
+                }
+            })  .enableFieldsSelection()
+                .enableRecursivity()
+                .finalize();
+
+            db.Beer.findOne(query).then( (beer) => {
                 if(!beer) {
                     let error = new restify.NotFoundError("Requested beer was not found");
                     console.log(error);
@@ -100,6 +105,56 @@ export default function beersEndpoints(server, passport) {
                 return next(err);
             });
     });
+
+    /**
+     * @api {delete} /beers/:id Delete single
+     * @apiName DeleteBeer
+     * @apiGroup Beers
+     * @apiVersion 0.1.0
+     * @apiUse BeerResponseFields
+     */
+    server.del({
+            url: '/beers/:id',
+            validation: {
+                resources: {
+                    id:                 { isRequired: true, isNumeric: true }
+                }
+            }
+        },
+
+        (req, res, next) => {
+
+            //enable jwt authentication for this endpoint
+            passport.authenticate('jwt', { session: false }, (info, user, err) => {
+                if(err) return next(err);
+
+                //check if user group if authorized to access this endpoint
+                if(!['admin'].includes(user.role)) {
+                    res.send(401, "Insufficient Permissions");
+                    return next();
+                }
+
+                db.Beer.destroy({
+                    where: {
+                        id: req.params.id
+                    }
+                }).then( (beer) => {
+                    if(!beer) {
+                        let error = new restify.NotFoundError("Unable to delete this beer...");
+                        res.send(error);
+                    } else {
+                        res.send({
+                            status: "OK",
+                            message: "Successfully deleted this beer !"
+                        });
+                    }
+                    return next();
+                }).catch( (err) => {
+                    return next(err);
+                });
+
+            })(req, res, next);
+        });
 
     /**
      * @api {post} /beers/:id Update single
@@ -135,23 +190,23 @@ export default function beersEndpoints(server, passport) {
             //enable jwt authentication for this endpoint
             passport.authenticate('jwt', { session: false }, (info, user, err) => {
                 if(err) return next(err);
-                req.user = user;
-            })(req, res, next);
 
-            //check if user group if authorized to access this endpoint
-            if(!['admin', 'contributor'].includes(req.user.role)) {
-                res.send(401, "Insufficient Permissions");
-                return next();
-            }
-
-            db.Beer.build(req.body)
-                .save()
-                .then( (newBeer) => {
-                    res.send(newBeer);
+                //check if user group if authorized to access this endpoint
+                if(!['admin', 'contributor'].includes(user.role)) {
+                    res.send(401, "Insufficient Permissions");
                     return next();
-                }).catch( (err) => {
+                }
+
+                db.Beer.build(req.body)
+                    .save()
+                    .then( (newBeer) => {
+                        res.send(newBeer);
+                        return next();
+                    }).catch( (err) => {
                     return next(err);
-            });
+                });
+
+            })(req, res, next);
         });
 
     /**
@@ -184,25 +239,39 @@ export default function beersEndpoints(server, passport) {
         },
 
         (req, res, next) => {
-            db.Beer.findOne({
-                where: {
-                    id: req.params.id
-                },
-                include: [db.Brewery, db.Category, db.Style]
-            }).then( (beer) => {
-                if(!beer) {
-                    res.send(new restify.NotFoundError("Requested beer was not found"));
-                } else {
-                    beer.update(req.params).
-                    then( (updatedBeer) => {
-                        res.send(updatedBeer);
-                    }).catch( (err) => {
-                        return next(err);
-                    });
+
+            //enable jwt authentication for this endpoint
+            passport.authenticate('jwt', { session: false }, (info, user, err) => {
+                if(err) return next(err);
+
+                //check if user group if authorized to access this endpoint
+                if(!['admin', 'contributor'].includes(user.role)) {
+                    res.send(401, "Insufficient Permissions");
+                    return next();
                 }
-                return next();
-            }).catch( (err) => {
-                return next(err);
-            });
+
+                db.Beer.findOne({
+                    where: {
+                        id: req.params.id
+                    },
+                    include: [db.Brewery, db.Category, db.Style]
+                }).then( (beer) => {
+                    if(!beer) {
+                        res.send(new restify.NotFoundError("Requested beer was not found"));
+                    } else {
+                        beer.update(req.params).
+                        then( (updatedBeer) => {
+                            res.send(updatedBeer);
+                        }).catch( (err) => {
+                            return next(err);
+                        });
+                    }
+                    return next();
+                }).catch( (err) => {
+                    return next(err);
+                });
+
+            })(req, res, next);
         });
+
 }

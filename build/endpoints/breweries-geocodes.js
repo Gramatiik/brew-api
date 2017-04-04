@@ -214,6 +214,51 @@ function breweriesGeocodesEndpoints(server, passport) {
     });
 
     /**
+     * @api {delete} /breweries-locations/:brewery_id Delete single
+     * @apiName DeleteBreweriesLocation
+     * @apiGroup BreweriesLocations
+     * @apiVersion 0.1.0
+     */
+    server.del({
+        url: '/breweries-locations/:breweryId',
+        validation: {
+            resources: {
+                breweryId: { isRequired: true, isNumeric: true }
+            }
+        }
+    }, function (req, res, next) {
+
+        //enable jwt authentication for this endpoint
+        passport.authenticate('jwt', { session: false }, function (info, user, err) {
+            if (err) return next(err);
+
+            //check if user is authorised to do this
+            if (!['admin', 'contributor'].includes(user.role)) {
+                res.send(401, "Insufficient Permissions");
+                return next();
+            }
+
+            _models2.default.BreweryGeocode.destroy({
+                where: {
+                    brewery_id: req.params.breweryId
+                }
+            }).then(function (status) {
+                if (!status) {
+                    return next(new _restify2.default.NotFoundError("Unable to delete, requested Brewery Location was not found..."));
+                } else {
+                    res.send({
+                        status: "OK",
+                        message: "Successfully deleted requested brewery-geocode"
+                    });
+                }
+                return next();
+            }).catch(function (error) {
+                return next(error);
+            });
+        })(req, res, next);
+    });
+
+    /**
      * @api {put} /breweries-locations/:brewery_id Update single
      * @apiName PutBreweriesLocation
      * @apiGroup BreweriesLocations
