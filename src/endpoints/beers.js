@@ -42,9 +42,9 @@ export default function beersEndpoints(server, passport) {
     }, (req, res, next) => {
 
         let query = new RequestBuilder(req, db, 'Beer', {
-            include: [db.BreweryGeocode, db.Beer ],
-            defaultLimit: 10,
-            maxLimit: 50
+            include: [db.Brewery, db.Category, db.Style],
+            defaultLimit: 25,
+            maxLimit: 75
         })  .enableFieldsSelection()
             .enableRecursivity()
             .enablePagination()
