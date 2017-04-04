@@ -1,6 +1,0 @@
-{
-  "jwt-secret": "S3cReTKeyJWt",
-  "jwtSession": {
-    "session": false
-  }
-}

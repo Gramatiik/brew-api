@@ -42,7 +42,7 @@ export default function beersEndpoints(server, passport) {
     }, (req, res, next) => {
 
         let query = new RequestBuilder(req, db, 'Beer', {
-            include: [db.Brewery, db.Category, db.Style],
+            include: [db.Category, db.Style],
             defaultLimit: 25,
             maxLimit: 75
         })  .enableFieldsSelection()
@@ -63,6 +63,50 @@ export default function beersEndpoints(server, passport) {
         });
 
     });
+
+    /**
+     * @api {get} /beers/search/:query Search list
+     * @apiName GetSearchBeers
+     * @apiGroup Beers
+     * @apiVersion 0.1.0
+     * @apiSuccess {Object} Beer Beer response object
+     * @apiUse BeerResponseFields
+     */
+    server.get({
+            url: '/beers/search/:query',
+            validation: {
+                resources: {
+                    query:  { isRequired: true }
+                }
+            }
+        },
+
+        (req, res, next) => {
+
+            let query = new RequestBuilder(req, db, 'Beer', {
+                include: [db.Category, db.Style],
+                where: {
+                    name: {
+                        $like: "%" + req.params.query + "%"
+                    }
+                }
+            })  .enableFieldsSelection()
+                .enableOrdering()
+                .enablePagination()
+                .enableRecursivity()
+                .finalize();
+
+            db.Beer.findAll(query).then( (breweries) => {
+                if (!breweries) {
+                    res.send(new restify.NotFoundError("No beers were found..."));
+                } else {
+                    res.send(breweries);
+                }
+                return next();
+            }).catch((err) => {
+                return next(err);
+            });
+        });
 
     /**
      * @api {get} /beers/:id Get single
@@ -86,7 +130,7 @@ export default function beersEndpoints(server, passport) {
             let query = new RequestBuilder(req, db, 'Beer', {
                 include: [db.Brewery, db.Category, db.Style],
                 where: {
-                    id: req.param.id
+                    id: req.params.id
                 }
             })  .enableFieldsSelection()
                 .enableRecursivity()
