@@ -66,6 +66,50 @@ export default function breweriesEndpoints(server, passport) {
     });
 
     /**
+     * @api {get} /breweries/search/:query Search list
+     * @apiName GetSearchBreweries
+     * @apiGroup Breweries
+     * @apiVersion 0.1.0
+     * @apiSuccess {Object[]} Brewery Brewery response object
+     * @apiUse BreweryResponseFields
+     */
+    server.get({
+            url: '/breweries/search/:query',
+            validation: {
+                resources: {
+                    query:  { isRequired: true }
+                }
+            }
+        },
+
+        (req, res, next) => {
+
+            let query = new RequestBuilder(req, db, 'Brewery', {
+                include: [db.BreweryGeocode, db.Beer],
+                where: {
+                    name: {
+                        $like: "%" + req.params.query + "%"
+                    }
+                }
+            })  .enableFieldsSelection()
+                .enableOrdering()
+                .enablePagination()
+                .enableRecursivity()
+                .finalize();
+
+            db.Brewery.findAll(query).then( (breweries) => {
+                if (!breweries) {
+                    res.send(new restify.NotFoundError("No breweries were found..."));
+                } else {
+                    res.send(breweries);
+                }
+                return next();
+            }).catch((err) => {
+                return next(err);
+            });
+        });
+
+    /**
      * @api {post} /breweries Add single
      * @apiName PostBrewery
      * @apiGroup Breweries

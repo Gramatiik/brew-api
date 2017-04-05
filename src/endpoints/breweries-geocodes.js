@@ -38,18 +38,19 @@ export default function breweriesGeocodesEndpoints(server, passport) {
         url: '/breweries-locations/near',
         validation: {
             queries: {
-                latitude: { isRequired: true, isNumeric: true },
-                longitude: { isRequired: true, isNumeric: true },
+                latitude: { isRequired: true, isFloat: true },
+                longitude: { isRequired: true, isFloat: true },
                 distance: { isRequired: true, isNumeric: true },
             }
         }
         }, (req, res, next) => {
-        db.sequelize.query(`SELECT *, DEGREES(ACOS(
+        db.sequelize.query(`SELECT breweries_geocode.*, breweries.name, DEGREES(ACOS(
         COS(RADIANS(latitude)) * COS(RADIANS(:lat)) *
         COS(RADIANS(longitude) - RADIANS(:lng)) +
         SIN(RADIANS(latitude)) * SIN(RADIANS(:lat))
         )) AS distance
         FROM breweries_geocode
+        LEFT JOIN breweries ON breweries_geocode.brewery_id = breweries.id
         WHERE longitude BETWEEN :lng-:dist/abs(cos(:lat)*111) AND :lng+:dist/abs(cos(:lat)*111)
         AND latitude BETWEEN :lat-(:dist/111) AND :lat+(:dist/111)
         ORDER BY latitude DESC, longitude DESC

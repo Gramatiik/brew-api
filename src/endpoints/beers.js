@@ -96,11 +96,11 @@ export default function beersEndpoints(server, passport) {
                 .enableRecursivity()
                 .finalize();
 
-            db.Beer.findAll(query).then( (breweries) => {
-                if (!breweries) {
+            db.Beer.findAll(query).then( (beers) => {
+                if (!beers) {
                     res.send(new restify.NotFoundError("No beers were found..."));
                 } else {
-                    res.send(breweries);
+                    res.send(beers);
                 }
                 return next();
             }).catch((err) => {
