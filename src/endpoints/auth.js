@@ -25,10 +25,11 @@ export default function authEndpoints(server) {
                 where: {
                     username: username,
                     password: md5(password)
-                }
+                },
+                attributes: [ 'id', 'username', 'email', 'role' ] //these are default fields
             }).then( (user) => {
                 if(!user) {
-                    res.send({
+                    res.send(404,{
                         message: "Invalid credentials"
                     });
                 } else {
@@ -37,7 +38,7 @@ export default function authEndpoints(server) {
 
                     let payload = {
                         iat: now,
-                        exp: now + 60*60, //TODO : make expiration time configurable
+                        exp: now + 60*60*24*365, //expiration time is set to one year, TODO : implement refresh token for mobile apps
                         id: user.id,
                         username: user.username,
                         role: user.role
@@ -45,7 +46,7 @@ export default function authEndpoints(server) {
 
                     let token = jwt.encode(payload, jwtConfig["jwt-secret"], 'HS256', {});
 
-                    res.send({ token: token });
+                    res.send({ user: user, token: token });
                 }
 
                 return next();
