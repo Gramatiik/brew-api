@@ -79,6 +79,6 @@ authEndpoints(server);
 handlerErrors(server);
 
 //launch server !
-server.listen('9090', () => {
+server.listen('80', () => {
     console.log('%s listening at %s', server.name, server.url);
 });
