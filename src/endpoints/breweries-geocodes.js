@@ -44,21 +44,24 @@ export default function breweriesGeocodesEndpoints(server, passport) {
             }
         }
         }, (req, res, next) => {
-        db.sequelize.query(`SELECT breweries_geocode.*, breweries.name, DEGREES(ACOS(
-        COS(RADIANS(latitude)) * COS(RADIANS(:lat)) *
-        COS(RADIANS(longitude) - RADIANS(:lng)) +
-        SIN(RADIANS(latitude)) * SIN(RADIANS(:lat))
-        )) AS distance
+        db.sequelize.query(`SELECT breweries_geocode.*, breweries.name, ACOS(
+        SIN(RADIANS(breweries_geocode.latitude)) * SIN(RADIANS(:lat)) +
+        COS(RADIANS(breweries_geocode.latitude)) * COS(RADIANS(:lat)) *
+        COS(RADIANS(breweries_geocode.longitude) - RADIANS(:lng))
+        ) * 6371 AS distance
         FROM breweries_geocode
         LEFT JOIN breweries ON breweries_geocode.brewery_id = breweries.id
-        WHERE longitude BETWEEN :lng-:dist/abs(cos(:lat)*111) AND :lng+:dist/abs(cos(:lat)*111)
-        AND latitude BETWEEN :lat-(:dist/111) AND :lat+(:dist/111)
-        ORDER BY latitude DESC, longitude DESC
-        LIMIT 10`,
+        WHERE ACOS(
+        SIN(RADIANS(breweries_geocode.latitude)) * SIN(RADIANS(:lat)) +
+        COS(RADIANS(breweries_geocode.latitude)) * COS(RADIANS(:lat)) *
+        COS(RADIANS(:lng) - RADIANS(breweries_geocode.longitude))
+        ) * 6371 <= :dist
+        ORDER BY distance ASC
+        LIMIT 200`,
             {
                 replacements: {
-                    lat: parseInt(req.params.latitude),
-                    lng: parseInt(req.params.longitude),
+                    lat: parseFloat(req.params.latitude),
+                    lng: parseFloat(req.params.longitude),
                     dist: parseInt(req.params.distance),
                 },
                 type: db.sequelize.QueryTypes.SELECT
