@@ -1,6 +1,7 @@
 import db from "../models";
 import restify from "restify";
 import RequestBuilder from "../helpers/RequestBuilder";
+import GooglePlacesConnector from '../connectors/GooglePlacesConnector';
 
 export default function breweriesGeocodesEndpoints(server, passport) {
 
@@ -28,6 +29,10 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @apiName GetBreweriesLocationsNear
      * @apiGroup BreweriesLocations
      * @apiVersion 1.0.0
+     * @apiParam {Number} latitude Center latitude
+     * @apiParam {Number} longitude Center longitude
+     * @apiParam {Number} distance Radius from center point (in KM)
+     * @apiParam {boolean} [bars] Should include bars around breweries or not
      *
      * @apiSuccess {Object[]} BreweryGeocode
      * @apiSuccess {Number}     BreweryGeocode.id id of this location item
@@ -45,6 +50,7 @@ export default function breweriesGeocodesEndpoints(server, passport) {
                 latitude: { isRequired: true, isFloat: true },
                 longitude: { isRequired: true, isFloat: true },
                 distance: { isRequired: true, isNumeric: true },
+                bars: { isRequired: false, isBoolean: true }
             }
         }
         }, (req, res, next) => {
@@ -74,8 +80,26 @@ export default function breweriesGeocodesEndpoints(server, passport) {
             if(!locations){
                 return next(new restify.NotFoundError("No breweries locations found with the given parameters"));
             } else {
-                res.send(locations);
-                return next();
+
+                //if we choosed to search for bars
+                if(req.params.bars && req.params.bars === 'true' ) {
+                    //we loop through locations and attempt to find bars
+                    let promises = [];
+                    for(let loc of locations) {
+                        promises.push(GooglePlacesConnector.searchNearBars(loc.latitude, loc.longitude, 1000).then( (bars) => {
+                            loc.bars = JSON.parse(bars).results || {};
+                        }));
+                    }
+
+                    //wait for Places API response and add data to response
+                    Promise.all(promises).then( () => {
+                        res.send(locations);
+                        return next();
+                    });
+                } else {
+                    res.send(locations);
+                    return next();
+                }
             }
         }).catch( (err) => {
             return next(err);
@@ -139,6 +163,8 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @apiGroup BreweriesLocations
      * @apiVersion 1.0.0
      *
+     * @apiParam {boolean} [bars] Set to true if you want to find close bars
+     *
      * @apiSuccess {Object} BreweryGeocode
      * @apiSuccess {Number}     BreweryGeocode.id id of this location item
      * @apiSuccess {Number}     BreweryGeocode.brewery_id brewery id for this location
@@ -153,6 +179,9 @@ export default function breweriesGeocodesEndpoints(server, passport) {
             validation: {
                 resources: {
                     breweryId: { isRequired: true, isNumeric: true }
+                },
+                queries: {
+                    bars: { isRequired: false, isBoolean: true }
                 }
             }
         },
@@ -170,7 +199,19 @@ export default function breweriesGeocodesEndpoints(server, passport) {
                 if(!breweryGeocode){
                     res.send(new restify.NotFoundError("Geolocation for brewery was not found"));
                 } else {
-                    res.send(breweryGeocode.get({plain: true}));
+                    if(req.params.bars && req.params.bars === 'true') {
+                        GooglePlacesConnector.searchNearBars(breweryGeocode.latitude, breweryGeocode.longitude, 1000).then( (bars) => {
+
+                            let responseObject = breweryGeocode.get({plain: true});
+                            responseObject.bars = JSON.parse(bars).results || {};
+                            res.send(responseObject);
+                            return next();
+
+                        });
+                    } else {
+                        res.send(breweryGeocode.get({plain: true}));
+                        return next();
+                    }
                 }
                 return next();
             }).catch( (err) => {
