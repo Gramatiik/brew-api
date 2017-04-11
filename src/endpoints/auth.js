@@ -5,6 +5,16 @@ let jwtConfig = require(__dirname + "/../config/jwt-config.json");
 
 export default function authEndpoints(server) {
 
+  /**
+   * @api {post} /auth/jwt JWT auth
+   * @apiName PostAuthJwt
+   * @apiGroup Auth
+   * @apiVersion 1.0.0
+   * @apiSuccess {User} user User fields
+   * @apiSuccess {String} token JWT token
+   * @apiPermission none
+   * @apiDescription Authenticate to APi using JWT
+   */
     server.post({
             url: "/auth/jwt",
             validation: {
@@ -56,7 +66,3 @@ export default function authEndpoints(server) {
             });
         });
 }
-
-
-
-

@@ -8,8 +8,10 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @api {get} /breweries-locations/count Get count
      * @apiName GetBreweriesLocationsCount
      * @apiGroup BreweriesLocations
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Number} count number of breweries-locations
+     * @apiPermission none
+     * @apiDescription Get the total number of breweries-locations in database
      */
     server.get('/breweries-locations/count', (req, res, next) => {
         db.BreweryGeocode.count().then( function(count) {
@@ -25,7 +27,7 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @api {get} /breweries-locations/near Get near breweries
      * @apiName GetBreweriesLocationsNear
      * @apiGroup BreweriesLocations
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      *
      * @apiSuccess {Object[]} BreweryGeocode
      * @apiSuccess {Number}     BreweryGeocode.id id of this location item
@@ -33,6 +35,8 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @apiSuccess {Number}     BreweryGeocode.latitude latitude value
      * @apiSuccess {Number}     BreweryGeocode.longitude longitude value
      * @apiSuccess {String}     BreweryGeocode.accuracy type of accuracy for the measurement
+     * @apiPermission none
+     * @apiDescription Get the nearest breweries-locations withing a radius of distance (in km) at given GPS coordinates (includes brewery name).
      */
     server.get({
         url: '/breweries-locations/near',
@@ -82,7 +86,7 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @api {get} /breweries-locations Get list
      * @apiName GetBreweriesLocations
      * @apiGroup BreweriesLocations
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      *
      * @apiSuccess {Object[]} BreweryGeocode
      * @apiSuccess {Number}     BreweryGeocode.id id of this location item
@@ -90,6 +94,8 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @apiSuccess {Number}     BreweryGeocode.latitude latitude value
      * @apiSuccess {Number}     BreweryGeocode.longitude longitude value
      * @apiSuccess {String}     BreweryGeocode.accuracy type of accuracy for the measurement
+     * @apiPermission none
+     * @apiDescription Get a list of Breweries, you can use ordering and pagination here.
      */
     server.get({
             url: '/breweries-locations',
@@ -131,7 +137,7 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @api {get} /breweries-locations/:brewery_id Get single
      * @apiName GetBreweriesLocationsId
      * @apiGroup BreweriesLocations
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      *
      * @apiSuccess {Object} BreweryGeocode
      * @apiSuccess {Number}     BreweryGeocode.id id of this location item
@@ -139,6 +145,8 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @apiSuccess {Number}     BreweryGeocode.latitude latitude value
      * @apiSuccess {Number}     BreweryGeocode.longitude longitude value
      * @apiSuccess {String}     BreweryGeocode.accuracy type of accuracy for the measurement
+     * @apiPermission none
+     * @apiDescription Get a single Brewery Location record.
      */
     server.get({
             url: '/breweries-locations/:breweryId',
@@ -176,7 +184,7 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @api {post} /breweries-locations Add single
      * @apiName PostBreweriesLocation
      * @apiGroup BreweriesLocations
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      *
      * @apiSuccess {Object} BreweryGeocode
      * @apiSuccess {Number}     BreweryGeocode.id id of this location item
@@ -184,6 +192,8 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @apiSuccess {Number}     BreweryGeocode.latitude latitude value
      * @apiSuccess {Number}     BreweryGeocode.longitude longitude value
      * @apiSuccess {String}     BreweryGeocode.accuracy type of accuracy for the measurement
+     * @apiPermission admin contributor
+     * @apiDescription Add a new Brewery Location to database.
      */
     server.post({
             url: '/breweries-locations',
@@ -226,7 +236,10 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @api {delete} /breweries-locations/:brewery_id Delete single
      * @apiName DeleteBreweriesLocation
      * @apiGroup BreweriesLocations
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
+     * @apiPermission admin
+     * @apiDescription Delete a Brewery Location from database
+     * (this does not delete associated brewery and does not update brewery_location_id field , use it with caution).
      */
     server.del({
             url: '/breweries-locations/:breweryId',
@@ -243,7 +256,7 @@ export default function breweriesGeocodesEndpoints(server, passport) {
                 if(err) return next(err);
 
                 //check if user is authorised to do this
-                if(!['admin','contributor'].includes(user.role)) {
+                if(!['admin'].includes(user.role)) {
                     res.send(401, "Insufficient Permissions");
                     return next();
                 }
@@ -273,7 +286,7 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @api {put} /breweries-locations/:brewery_id Update single
      * @apiName PutBreweriesLocation
      * @apiGroup BreweriesLocations
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      *
      * @apiSuccess {Object} BreweryGeocode
      * @apiSuccess {Number}     BreweryGeocode.id id of this location item
@@ -281,6 +294,8 @@ export default function breweriesGeocodesEndpoints(server, passport) {
      * @apiSuccess {Number}     BreweryGeocode.latitude latitude value
      * @apiSuccess {Number}     BreweryGeocode.longitude longitude value
      * @apiSuccess {String}     BreweryGeocode.accuracy type of accuracy for the measurement
+     * @apiPermission admin, contributor
+     * @apiDescription Update a Brewery Location in database.
      */
     server.put({
             url: '/breweries-locations/:breweryId',

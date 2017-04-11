@@ -27,6 +27,8 @@ You can modify database connection settings in `src/config/db-config.json`.
 if you want to modify only documentation, change comments in source code, generate documentation with the above command and commit changes on master branch with a commit message starting with:  
  `[DOC] Your message here`.
 
+ to edit Doc header, just edit the [apidoc_intro.md](apidoc_intro.md) file.
+
  Documentation code is generated using [apidoc](https://github.com/apidoc/apidoc), it is currently hosted on github pages and can be found at :
 
  **https://gramatiik.github.io/brew-api/**

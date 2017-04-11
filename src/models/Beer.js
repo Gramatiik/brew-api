@@ -1,3 +1,47 @@
+/**
+ * @apiDefine BeerResponseFields
+ * Response fields for beer endpoint
+ *
+ * @apiSuccess {Number}     Beer.id record id
+ * @apiSuccess {Number}     Beer.brewery_id id of related brewery
+ * @apiSuccess {String}     Beer.name Name
+ * @apiSuccess {String}     Beer.cat_id id of related category
+ * @apiSuccess {String}     Beer.style_id id of related style
+ * @apiSuccess {String}     Beer.abv Alchool by volume value
+ * @apiSuccess {String}     Beer.ibu International Bitterness Units
+ * @apiSuccess {String}     Beer.srm Standard Reference Method
+ * @apiSuccess {String}     Beer.upc Universal Product Code
+ * @apiSuccess {String}     Beer.descript Description
+ */
+
+ /**
+  * @apiDefine BeerPostParameters
+  *
+  * @apiParam {String} name Beer name
+  * @apiParam {Number} [cat_id] Associated category id
+  * @apiParam {Number} [brewery_id] Associated Brewery ID
+  * @apiParam {Number} [style_id] Associated style id
+  * @apiParam {Number} abv Alchool by volume value
+  * @apiParam {Number} [ibu] International Bitterness Units
+  * @apiParam {Number} [srm] Standard Reference Method
+  * @apiParam {Number} [upc] Universal Product Code
+  * @apiParam {String} [descript] Beer description
+  */
+
+/**
+ * @apiDefine BeerPutParameters
+ *
+ * @apiParam {String} [name] Beer name
+ * @apiParam {Number} [cat_id] Associated category id
+ * @apiParam {Number} [brewery_id] Associated brewery id
+ * @apiParam {Number} [style_id] Associated style id
+ * @apiParam {Number} [abv] Alchool by volume value
+ * @apiParam {Number} [ibu] International Bitterness Units
+ * @apiParam {Number} [srm] Standard Reference Method
+ * @apiParam {Number} [upc] Universal Product Code
+ * @apiParam {String} [descript] Beer description
+ */
+ 
 module.exports = function(sequelize, DataTypes) {
 	let Beer = sequelize.define('Beer', {
 		id: {

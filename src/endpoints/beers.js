@@ -8,8 +8,10 @@ export default function beersEndpoints(server, passport) {
      * @api {get} /beers/count Get count
      * @apiName GetBeersCount
      * @apiGroup Beers
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Number} count number of beers
+     * @apiDescription Get the total number of beers in database.
+     * @apiPermission none
      */
     server.get('/beers/count', (req, res, next) => {
         db.Beer.count().then( (count) => {
@@ -24,9 +26,11 @@ export default function beersEndpoints(server, passport) {
      * @api {get} /beers Get list
      * @apiName GetBeers
      * @apiGroup Beers
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Object[]} Beer list of beer response objects
      * @apiUse BeerResponseFields
+     * @apiDescription Get a list of beers, use filtering and ordering to query precisely.
+     * @apiPermission none
      */
     server.get({
         url: '/beers',
@@ -68,9 +72,11 @@ export default function beersEndpoints(server, passport) {
      * @api {get} /beers/search/:query Search list
      * @apiName GetSearchBeers
      * @apiGroup Beers
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Object} Beer Beer response object
      * @apiUse BeerResponseFields
+     * @apiDescription Search for a beer, you can use ordering and pagination here.
+     * @apiPermission none
      */
     server.get({
             url: '/beers/search/:query',
@@ -112,9 +118,11 @@ export default function beersEndpoints(server, passport) {
      * @api {get} /beers/:id Get single
      * @apiName GetBeer
      * @apiGroup Beers
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Object} Beer Beer response object
      * @apiUse BeerResponseFields
+     * @apiDescription Get a Beer by its ID in database.
+     * @apiPermission none
      */
     server.get({
         url: '/beers/:id',
@@ -154,8 +162,10 @@ export default function beersEndpoints(server, passport) {
      * @api {delete} /beers/:id Delete single
      * @apiName DeleteBeer
      * @apiGroup Beers
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiUse BeerResponseFields
+     * @apiDescription Delete a Beer by its ID in database.
+     * @apiPermission admin
      */
     server.del({
             url: '/beers/:id',
@@ -201,13 +211,17 @@ export default function beersEndpoints(server, passport) {
         });
 
     /**
-     * @api {post} /beers/:id Update single
+     * @api {post} /beers/:id Add single
      * @apiName PostBeer
      * @apiGroup Beers
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Object} Beer Beer response object
-     * @apiuse BeerPutParameters
+     * @apiuse BeerPostParameters
      * @apiuse BeerResponseFields
+     * @apiDescription Add a new Beer to the database
+     *
+     * returns the added object if it succeded.
+     * @apiPermission admin contributor
      */
     server.post({
             url: '/beers',
@@ -215,12 +229,12 @@ export default function beersEndpoints(server, passport) {
                 content: {
                     //required parameters
                     name:           { isRequired: true },
+                    abv:            { isRequired: true, isNumeric: true },
 
                     //optional parameters
                     brewery_id:     { isRequired: false, isNumeric: true },
                     cat_id:         { isRequired: false, isNumeric: true },
                     style_id:       { isRequired: false, isNumeric: true },
-                    abv:            { isRequired: false, isNumeric: true },
                     ibu:            { isRequired: false, isNumeric: true },
                     srm:            { isRequired: false, isNumeric: true },
                     upc:            { isRequired: false, isNumeric: true },
@@ -257,10 +271,14 @@ export default function beersEndpoints(server, passport) {
      * @api {put} /beers/:id Update single
      * @apiName PutBeer
      * @apiGroup Beers
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Object} Beer Beer response object
      * @apiuse BeerPutParameters
      * @apiuse BeerResponseFields
+     * @apiDescription Update a Beer fields by its ID,
+     *
+     * returns the modified Beer in case of success.
+     * @apiPermission admin contributor
      */
     server.put({
             url: '/beers/:id',

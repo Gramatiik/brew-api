@@ -9,8 +9,10 @@ export default function usersEndpoints(server, passport) {
      * @api {get} /users/count Get count
      * @apiName GetUsersCount
      * @apiGroup Users
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Number} count number of users
+     * @apiPermission admin
+     * @apiDescription Get total count of users
      */
     server.get('/users/count',
 
@@ -31,9 +33,11 @@ export default function usersEndpoints(server, passport) {
      * @api {get} /users Get list
      * @apiName GetUsers
      * @apiGroup Users
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Object[]} User
      * @apiUse UserResponseFields
+     * @apiPermission admin
+     * @apiDescription Get a list of users, you can use pagination and ordering here.
      */
     server.get({
             url: '/users',
@@ -86,9 +90,12 @@ export default function usersEndpoints(server, passport) {
      * @api {get} /users/name/:username Get single - by username
      * @apiName GetUserByUsername
      * @apiGroup Users
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
+     * @apiParam {String} username Username
      * @apiSuccess {Object} User
      * @apiUse UserResponseFields
+     * @apiPermission admin
+     * @apiDescription Get user informations by its username.
      */
     server.get({
             url: '/users/name/:username',
@@ -102,6 +109,12 @@ export default function usersEndpoints(server, passport) {
             //enable jwt authentication for this endpoint
             passport.authenticate('jwt', { session: false }, (info, user, err) => {
                 if(err) return next(err);
+
+                //check if user group is authorized to access this endpoint
+                if(!['admin'].includes(user.role)) {
+                    res.send(401, "Insufficient Permissions");
+                    return next();
+                }
 
                 db.User.findOne({
                     where: {
@@ -126,9 +139,12 @@ export default function usersEndpoints(server, passport) {
      * @api {get} /users/:id Get single - by id
      * @apiName GetUserById
      * @apiGroup Users
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
+     * @apiParam {Number} id User ID
      * @apiSuccess {Object} User
      * @apiUse UserResponseFields
+     * @apiPermission admin
+     * @apiDescription Get user informations by its id.
      */
     server.get({
             url: '/users/:id',
@@ -173,9 +189,11 @@ export default function usersEndpoints(server, passport) {
      * @api {post} /users Create single
      * @apiName PostUser
      * @apiGroup Users
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Object} User Created user informations
      * @apiUse UserResponseFields
+     * @apiPermission none
+     * @apiDescription Create your user account
      */
     server.post({
         url: '/users',
@@ -193,6 +211,9 @@ export default function usersEndpoints(server, passport) {
         //hash password before saving
         req.body.password = md5(req.body.password);
 
+        //assign default user role, admins can update it later
+        req.body.role = "user";
+
         db.User.build(req.body)
             .save()
             .then( (newUser) => {
@@ -203,13 +224,16 @@ export default function usersEndpoints(server, passport) {
     });
 
     /**
-     * @api {put} /users/:id Update single
+     * @api {put} /users/(:id|me) Update single
      * @apiName PutUser
      * @apiGroup Users
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Object} User Updated user informations
+     * @apiParam {Number} id User id (replace by "me" to edit your profile)
      * @apiUse UserResponseFields
      * @apiuse UserUpdateParameters
+     * @apiPermission user admin
+     * @apiDescription Update User informations by its ID, if it's your ID, you don't need admin permissions.
      */
     server.put({
         url: '/users/:id',

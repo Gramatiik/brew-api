@@ -8,8 +8,10 @@ export default function breweriesEndpoints(server, passport) {
      * @api {get} /breweries/count Get count
      * @apiName GetBreweriesCount
      * @apiGroup Breweries
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Number} count number of breweries
+     * @apiPermission none
+     * @apiDescription Get the total number of Breweries in database.
      */
     server.get('/breweries/count', (req, res, next) => {
         db.Brewery.count().then( function(count) {
@@ -25,9 +27,11 @@ export default function breweriesEndpoints(server, passport) {
      * @api {get} /breweries Get list
      * @apiName GetBrewery
      * @apiGroup Breweries
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Object[]} Brewery Brewery response object
      * @apiUse BreweryResponseFields
+     * @apiPermission none
+     * @apiDescription Get a list of breweries, you can use ordering and pagination here.
      */
     server.get({
         url: '/breweries',
@@ -69,9 +73,12 @@ export default function breweriesEndpoints(server, passport) {
      * @api {get} /breweries/search/:query Search list
      * @apiName GetSearchBreweries
      * @apiGroup Breweries
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
+     * @apiParam {String} query Search query
      * @apiSuccess {Object[]} Brewery Brewery response object
      * @apiUse BreweryResponseFields
+     * @apiPermission none
+     * @apiDescription Search for breweries by their names.
      */
     server.get({
             url: '/breweries/search/:query',
@@ -113,8 +120,10 @@ export default function breweriesEndpoints(server, passport) {
      * @api {post} /breweries Add single
      * @apiName PostBrewery
      * @apiGroup Breweries
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiUse BreweryPostParameters
+     * @apiPermission admin contributor
+     * @apiDescription Add a new Brewery to database.
      */
     server.post({
         url: '/breweries',
@@ -163,9 +172,11 @@ export default function breweriesEndpoints(server, passport) {
      * @api {get} /breweries/:id Get single
      * @apiName GetBreweryId
      * @apiGroup Breweries
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiSuccess {Object} Brewery Brewery response object
      * @apiUse BreweryResponseFields
+     * @apiPermission none
+     * @apiDescription Get a single Brewery from database
      */
     server.get({
         url: '/breweries/:id',
@@ -206,8 +217,11 @@ export default function breweriesEndpoints(server, passport) {
      * @api {delete} /breweries/:id Delete single
      * @apiName DeleteBreweryId
      * @apiGroup Breweries
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
      * @apiUse BreweryResponseFields
+     * @apiPermission admin
+     * @apiDescription Delete a Brewery from database
+     * (this does not delete location or beers related to this brewery and does not updates fields, use it with caution).
      */
     server.del({
         url: '/breweries/:id',
@@ -257,7 +271,10 @@ export default function breweriesEndpoints(server, passport) {
      * @api {put} /breweries Update single
      * @apiName PutBrewery
      * @apiGroup Breweries
-     * @apiVersion 0.1.0
+     * @apiVersion 1.0.0
+     * @apiUse BreweryPutParameters
+     * @apiPermission admin contributor
+     * @apiDescription Update a single Brewery in database.
      */
     server.put({
             url: '/breweries/:id',
