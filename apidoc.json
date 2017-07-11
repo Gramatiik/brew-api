@@ -1,0 +1,14 @@
+{
+    "name": "brew-api",
+    "version": "1.0.0",
+    "description": "social beer api",
+    "title": "brewAPI - Documentation",
+    "url": "http://brew.api/",
+    "template": {
+        "withGenerator": false
+    },
+    "header": {
+        "title": "Introduction",
+        "filename": "apidoc_intro.md"
+    }
+}
