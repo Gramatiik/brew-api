@@ -1,6 +1,12 @@
-## Brew API
+# Brew API
 
 a restful beer API using OpenBeerDB data
+
+## Requirements
+
+- NodeJS (6+ recommended).
+- NPM (3+ recommended).
+- MYSQL database (to import migration files), or any database but you will have to adapt migrations scripts.
 
 ## Setup
 
@@ -8,7 +14,8 @@ a restful beer API using OpenBeerDB data
 
 - install dependencies :
   `npm install` or `yarn` in root project folder  
-  (you need to have `babel`, `concurrently` and `nodemon` installed **globally** to run npm scripts).
+  
+- edit the configuration file in `src/config/config.json` to match your needs.
 
 - to run server in watch mode for development, use `npm run dev`.
 
