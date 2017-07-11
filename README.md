@@ -36,4 +36,4 @@ if you want to modify only documentation, change comments in source code, genera
 
 ## Licence
 
-MIT _(see **[LICENCE.md](LICENCE.md)**)_
+[MIT](LICENCE.md)
