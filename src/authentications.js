@@ -1,6 +1,6 @@
 import passportHttp from "passport-http";
 import passportJWT from "passport-jwt";
-let jwt_config = require(__dirname + "/config/jwt-config.json");
+let jwtConfig = require(__dirname + "/config/config.json")['jwt'];
 const BasicStrategy = passportHttp.BasicStrategy;
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJwt = passportJWT.ExtractJwt;
@@ -31,7 +31,7 @@ export default function loadAuthentications(passport, db) {
 
     //make parameters for jwt authentication
     const params = {
-        secretOrKey: jwt_config["jwt-secret"],
+        secretOrKey: jwtConfig["jwt-secret"],
         jwtFromRequest: ExtractJwt.fromUrlQueryParameter("token")
     };
 

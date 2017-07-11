@@ -1,7 +1,7 @@
 import db from "../models";
 import jwt from "jwt-simple";
 import md5 from "md5";
-let jwtConfig = require(__dirname + "/../config/jwt-config.json");
+let jwtConfig = require(__dirname + "/../config/config.json")['jwt'];
 
 export default function authEndpoints(server) {
 

@@ -1,0 +1,42 @@
+{
+    "general": {
+        "version": "1.0.0",
+        "port": 8080
+    },
+    "google-places": {
+        "baseUrl": "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
+        "apiKey": ""
+    },
+    "sequelize": {
+        "development": {
+            "username": "",
+            "password": "",
+            "database": "brewAPI",
+            "port": 3306,
+            "host": "localhost",
+            "dialect": "mysql"
+        },
+        "test": {
+            "username": "",
+            "password": "",
+            "database": "brewAPI",
+            "host": "localhost",
+            "port": 3306,
+            "dialect": "mysql"
+        },
+        "production": {
+            "username": "",
+            "password": "",
+            "database": "brewAPI",
+            "host": "localhost",
+            "port": 3306,
+            "dialect": "mysql"
+        }
+    },
+    "jwt": {
+        "jwt-secret": "JwTS3creTKey",
+        "jwtSession": {
+            "session": false
+        }
+    }
+}

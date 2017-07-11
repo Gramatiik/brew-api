@@ -3,6 +3,8 @@ import restifyValidation from "node-restify-validation";
 import passport from "passport";
 import db from "./models";
 
+let config = require(__dirname + "/config/config.json")['general'];
+
 //error handling
 import handlerErrors from "./errors/handleErrors";
 
@@ -51,7 +53,7 @@ server.use( (req, res, next) => {
 server.get('/', (req,res, next) => {
     res.send({
         message: "Welcome to BrewAPI",
-        version: "1.0.0"
+        version: config.version
     });
 
     return next();
@@ -79,6 +81,6 @@ authEndpoints(server);
 handlerErrors(server);
 
 //launch server !
-server.listen('80', () => {
+server.listen(config.port, () => {
     console.log('%s listening at %s', server.name, server.url);
 });
