@@ -1,0 +1,45 @@
+{
+  "name": "brew-api",
+  "version": "1.0.0",
+  "description": "social beer api",
+  "main": "build/app.js",
+  "scripts": {
+    "dev": "node_modules/.bin/concurrently \"npm run build-watch\" \"npm run up-watch\"",
+    "build": "node_modules/.bin/babel  src/ --out-dir build/ --copy-files",
+    "build-watch": "node_modules/.bin/babel  src/ --out-dir build/ --copy-files --watch",
+    "up": "node build/app.js",
+    "up-watch": "node_modules/.bin/nodemon build/app.js",
+    "make-doc": "node_modules/.bin/apidoc -i src/ -o docs/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gramatiik/brew-api.git"
+  },
+  "author": "Stanyslas Bres <stanyslas.bres@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Gramatiik/brew-api/issues"
+  },
+  "homepage": "https://github.com/Gramatiik/brew-api#readme",
+  "dependencies": {
+    "jwt-simple": "^0.5.1",
+    "md5": "^2.2.1",
+    "mysql": "^2.13.0",
+    "node-restify-validation": "^1.1.1",
+    "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
+    "passport-jwt": "^2.2.1",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.0",
+    "restify": "^4.3.0",
+    "sequelize": "^3.30.1"
+  },
+  "devDependencies": {
+    "apidoc": "^0.17.6",
+    "babel-cli": "^6.22.2",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-stage-0": "^6.22.0",
+    "concurrently": "^3.4.0",
+    "nodemon": "^1.11.0"
+  }
+}
